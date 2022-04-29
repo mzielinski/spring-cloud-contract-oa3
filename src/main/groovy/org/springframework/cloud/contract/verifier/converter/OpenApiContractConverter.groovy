@@ -392,6 +392,11 @@ class OpenApiContractConverter implements ContractConverter<Collection<PathItem>
         return sccContracts
     }
 
+    @Override
+    Collection<PathItem> convertTo(Collection<Contract> contract) {
+        throw new UnsupportedOperationException("Cannot convert contracts into oa3")
+    }
+
     YamlContract.KeyValueMatcher buildKeyValueMatcher(def matcher) {
         YamlContract.KeyValueMatcher keyValueMatcher = new YamlContract.KeyValueMatcher()
         keyValueMatcher.key = matcher?.key
@@ -434,11 +439,6 @@ class OpenApiContractConverter implements ContractConverter<Collection<PathItem>
             }
         }
         return null
-    }
-
-    @Override
-    Collection<PathItem> convertTo(Collection<Contract> contract) {
-        throw new RuntimeException("Not Implemented")
     }
 
     boolean checkServiceEnabled(String serviceName){

@@ -13,7 +13,6 @@ paths:
       operationId: listPets
       tags:
         - pets
-      # Define Contracts
       x-contracts:
         - contractId: 1
           name: Test List All Pets, No Limit
@@ -51,16 +50,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Pets"
-          #Define Expectations for Contracts (expecting 200, application/json response and below conditions)
           x-contracts:
             - contractId: 1
               matchers:
-                    path: $.*
-                    maxOccurance: 25
+                path: $.*
+                maxOccurance: 25
             - contractId: 2
               matchers:
-                    path: $.*
-                    maxOccurance: 25
+                path: $.*
+                maxOccurance: 25
         default:
           description: unexpected error
           content:
@@ -68,9 +66,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     post:
-      description: Creates a new pet in the store.  Duplicates are allowed
+      summary: Creates a new pet in the store
       operationId: addPet
-      # Define Contracts
+      description: Duplicates are allowed
+      tags:
+        - pets
       x-contracts:
         - contractId: 1
           name: Test Create Pet
@@ -83,11 +83,11 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewPet'
+              $ref: '#/components/schemas/Pet'
         x-contracts:
-            - contractId: 1
-              body:
-                name: Jake
+          - contractId: 1
+            body:
+              name: Jake
       responses:
         '200':
           description: pet response
