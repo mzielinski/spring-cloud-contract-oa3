@@ -26,8 +26,8 @@ class OpenApiContactConverterTest extends Specification {
         where:
         filename                      || expectedNumberOfContracts
         'verify_fraud_service.yml'    || 6
-        'verify_matchers.yml'         || 1
-        'sample/swagger_petstore.yml' || 3
+        'verify_oa3.yml'              || 1
+        'verify_swagger_petstore.yml' || 3
         'sample/payor.yml'            || 4
         'sample/velo_payments.yml'    || 10
     }
@@ -49,6 +49,7 @@ class OpenApiContactConverterTest extends Specification {
         filename = file.name
     }
 
+    @Unroll
     def 'should verify that contracts generated from #oa3Filename documentation are the same as expected #contractFilename'() {
         when:
         Collection<Contract> expectedContracts = yamlContractConverter.convertFrom(loadFile("yml/$contractFilename"))
@@ -60,9 +61,10 @@ class OpenApiContactConverterTest extends Specification {
         }
 
         where:
-        oa3Filename                || contractFilename
-        'verify_fraud_service.yml' || 'contract_fraud_service.yml'
-        'verify_matchers.yml'      || 'contract_verify_matchers.yml'
+        oa3Filename                   || contractFilename
+        'verify_swagger_petstore.yml' || 'contract_swagger_petstore.yml'
+        'verify_fraud_service.yml'    || 'contract_fraud_service.yml'
+        'verify_oa3.yml'              || 'contract_oa3.yml'
     }
 
 

@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
-  description: Validate contract matchers
-  title: Sample API with matchers
+  description: Validate contracts
+  title: Sample API with different use cases
   version: "1.0.0"
 paths:
   /check-matchers/1:

@@ -1,0 +1,27 @@
+---
+name: "Test List All Pets, No Limit"
+request:
+  method: "GET"
+  url: "/pet"
+  queryParameters:
+    limit: null
+response:
+  status: 200
+---
+name: "Test List All Pets, Limit 5"
+request:
+  method: "GET"
+  url: "/pet"
+  queryParameters:
+    limit: 5
+response:
+  status: 200
+---
+name: "Add a new Pet"
+request:
+  method: "POST"
+  url: "/pet"
+  body:
+    name: "Jake"
+response:
+  status: 0
