@@ -185,9 +185,9 @@ class OpenApiContractConverter implements ContractConverter<Collection<PathItem>
 
                                             contractBody.multipart?.named.each { contractNamed ->
                                                 YamlContract.Named named = new YamlContract.Named()
-                                                named.fileContent = contractNamed.fileContent
-                                                named.fileName = contractNamed.fileName
-                                                named.paramName = contractNamed.paramName
+                                                contractNamed.each {
+                                                    named."$it.key" = it.value
+                                                }
                                                 yamlContract.request.multipart.named.add(named)
                                             }
                                         }
@@ -242,37 +242,28 @@ class OpenApiContractConverter implements ContractConverter<Collection<PathItem>
                                             yamlContract.request.matchers.cookies.add(buildKeyValueMatcher(matcher))
                                         }
 
-                                        contractBody.matchers?.multipart?.each { matcher ->
-                                            matcher.params?.each { param ->
-                                                yamlContract.request.matchers.multipart.params.add(buildKeyValueMatcher(param))
+                                        def multipartMatchers = contractBody.matchers?.multipart
+                                        if (multipartMatchers) {
+                                            multipartMatchers.params?.each { param ->
+                                             yamlContract.request.matchers.multipart.params.add(buildKeyValueMatcher(param))
                                             }
 
-                                            matcher?.named?.each { namedParam ->
+                                            multipartMatchers?.named?.each { namedParam ->
                                                 YamlContract.MultipartNamedStubMatcher stubMatcher = new YamlContract.MultipartNamedStubMatcher()
                                                 stubMatcher.paramName = namedParam.paramName
-                                                try {
-
-                                                    if (StringUtils.isNotEmpty(namedParam?.fileName?.reqex)) {
-                                                        stubMatcher.fileName = new YamlContract.ValueMatcher(
-                                                                regex: namedParam?.fileName?.reqex,
-                                                                predefined: getPredefinedRegexFromString(matcher?.fileName?.predefined))
+                                                namedParam
+                                                        .findAll { it.key != 'paramName' }
+                                                        .findAll { it.value instanceof Map }
+                                                        .each {
+                                                    try {
+                                                        stubMatcher."${it.key}" = new YamlContract.ValueMatcher(
+                                                                regex: it.value?.regex,
+                                                                predefined: getPredefinedRegexFromString(it.value?.predefined)
+                                                        )
+                                                    } catch (Exception e) {
+                                                        log.error("Error parsing multipart matcher in request", e)
                                                     }
-
-                                                    if (StringUtils.isNotEmpty(namedParam?.fileContent?.reqex)) {
-                                                        stubMatcher.fileContent = new YamlContract.ValueMatcher(
-                                                                regex: namedParam?.fileContent?.reqex,
-                                                                predefined: getPredefinedRegexFromString(matcher?.fileContent?.predefined))
-                                                    }
-
-                                                    if (StringUtils.isNotEmpty(namedParam?.contentType?.reqex)) {
-                                                        stubMatcher.contentType = new YamlContract.ValueMatcher(
-                                                                regex: namedParam?.contentType?.reqex,
-                                                                predefined: getPredefinedRegexFromString(matcher?.contentType?.predefined))
-                                                    }
-                                                } catch (Exception e) {
-                                                    log.error("Error parsging multipart matcher in request", e)
                                                 }
-
                                                 yamlContract.request.matchers.multipart.named.add(stubMatcher)
                                             }
                                         }

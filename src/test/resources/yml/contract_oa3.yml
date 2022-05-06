@@ -1,4 +1,4 @@
-name: Verify all kind of matchers
+name: Should verify basic fileds and matchers
 request:
   method: POST
   url: /check-matchers/1
@@ -195,3 +195,34 @@ response:
         value: null
   headers:
     Content-Type: application/json
+---
+name: Should verify multipart
+request:
+  method: POST
+  url: /check-multipart
+  headers:
+    Content-Type: multipart/form-data;boundary=AaB03x
+  multipart:
+    params:
+      id: '777b09ac-cd64-11ec-9d64-0242ac120002'
+      number: 10
+    named:
+      - paramName: file
+        fileName: filename.csv
+        fileContent: file content
+        contentType: multipart/form-data
+  matchers:
+    multipart:
+      params:
+        - key: id
+          regex: ".+"
+        - key: number
+          predefined: number
+      named:
+        - paramName: file
+          fileName:
+            predefined: non_empty
+          fileContent:
+            predefined: non_empty
+response:
+  status: 201

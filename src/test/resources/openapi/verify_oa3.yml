@@ -6,11 +6,11 @@ info:
 paths:
   /check-matchers/1:
     post:
-      summary: Dummmy endpoint with all kinds of fields and matchers
+      summary: Dummmy endpoint with basic fields and matchers
       operationId: matchers
       x-contracts:
         - contractId: matchers
-          name: Verify all kind of matchers
+          name: Should verify basic fileds and matchers
       parameters:
         - name: limit
           in: query
@@ -293,3 +293,55 @@ paths:
                     value: null
               headers:
                 Content-Type: application/json
+  /check-multipart:
+    post:
+      summary: Dummmy for checking multipart
+      operationId: multipart
+      x-contracts:
+        - contractId: multipart
+          name: Should verify multipart
+      requestBody:
+        content:
+          multipart/form-data;boundary=AaB03x:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                number:
+                  type: integer
+                file:
+                  type: string
+                  format: binary
+        x-contracts:
+          - contractId: multipart
+            headers:
+              Content-Type: 'multipart/form-data;boundary=AaB03x'
+            multipart:
+              params:
+                id: '777b09ac-cd64-11ec-9d64-0242ac120002'
+                number: '10'
+              named:
+                - paramName: file
+                  fileName: 'filename.csv'
+                  fileContent: 'file content'
+                  contentType: 'multipart/form-data'
+            matchers:
+              multipart:
+                params:
+                  - key: id
+                    regex: '.+'
+                  - key: number
+                    predefined: number
+                named:
+                  - paramName: file
+                    fileName:
+                      regex: '[\S\s]+'
+                    fileContent:
+                      predefined: non_empty
+      responses:
+        '201':
+          description: Accepted
+          x-contracts:
+            - contractId: multipart
