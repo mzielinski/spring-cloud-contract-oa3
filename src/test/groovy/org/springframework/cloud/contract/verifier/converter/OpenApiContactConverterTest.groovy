@@ -26,7 +26,7 @@ class OpenApiContactConverterTest extends Specification {
 
         where:
         filename                             || expectedNumberOfContracts
-        'verify_oa3.yml'                     || 3
+        'verify_oa3.yml'                     || 4
         'verify_body_from_file_as_bytes.yml' || 1
         'verify_fraud_service.yml'           || 6
         'verify_swagger_petstore.yml'        || 3
@@ -59,7 +59,7 @@ class OpenApiContactConverterTest extends Specification {
 
         then:
         oa3Contracts.each { contract ->
-            contract == expectedContracts.find { it.name == contract.name }
+            assert contract == expectedContracts.find { it.name == contract.name }
         }
 
         where:

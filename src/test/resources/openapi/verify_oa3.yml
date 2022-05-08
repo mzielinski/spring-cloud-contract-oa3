@@ -345,7 +345,6 @@ paths:
           description: Accepted
           x-contracts:
             - contractId: multipart
-
   /check-body-from-file:
     post:
       summary: Checking body from file or bytes
@@ -371,3 +370,95 @@ paths:
             application/json:
               schema:
                 type: string
+  /check-references-from-request:
+    post:
+      summary: Checking reference taken from request
+      operationId: references-from-request
+      x-contracts:
+        - contractId: references-from-request
+          name: Should verify reference taken from request
+      security:
+        - BasicAuth: ['Basic dGVzdDp0ZXN0']
+      parameters:
+        - name: mask
+          in: query
+          required: false
+          example: true
+          schema:
+            type: boolean
+          x-contracts:
+            - contractId: references-from-request
+              value: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                  example: '/etc/passwd'
+        x-contracts:
+          - contractId: references-from-request
+            queryParameters:
+              - key: mask
+                type: boolean
+                value: true
+            headers:
+              Authorization: 'Basic dGVzdDp0ZXN0'
+            body:
+              path: '/etc/passwd'
+            matchers:
+              queryParameters:
+                - key: mask
+                  type: matching
+                  value: '(true|false)'
+              headers:
+                - key: Authorization
+                  regex: 'Basic .*'
+              body:
+                - path: $.path
+                  type: by_regex
+                  value: ".+"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    example: '/check-references-from-request?mask=true'
+                  path:
+                    type: string
+                    example: '/check-references-from-request'
+                  param:
+                    type: boolean
+                    example: true
+                  authorization:
+                    type: string
+                    example: 'Basic dGVzdDp0ZXN0'
+                  message:
+                    type: string
+                    example: 'Provided path in request is: /etc/passwd'
+                  request:
+                    type: string
+                    example: '{"path":"/etc/passwd"}'
+          x-contracts:
+            - contractId: references-from-request
+              headers:
+                Authorization: '{{{ request.headers.Authorization }}}'
+              body:
+                url: '{{{ request.url }}}'
+                path: '{{{ request.path }}}'
+                param: '{{{ request.query.mask }}}'
+                authorization: '{{{ request.headers.Authorization }}}'
+                message: 'Provided path in request is: {{{ jsonpath this "$.path" }}}.'
+                request: '{{{ request.body }}}'
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic

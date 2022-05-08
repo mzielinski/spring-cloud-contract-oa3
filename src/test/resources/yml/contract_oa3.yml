@@ -235,3 +235,37 @@ request:
 response:
   status: 200
   bodyFromFile: response.json
+---
+name: Should verify reference taken from request
+request:
+  method: POST
+  url: /check-references-from-request
+  queryParameters:
+    mask: true
+  headers:
+    Authorization: 'Basic dGVzdDp0ZXN0'
+  body:
+    path: '/etc/passwd'
+  matchers:
+    queryParameters:
+      - key: mask
+        type: matching
+        value: '(true|false)'
+    headers:
+      - key: Authorization
+        regex: 'Basic .*'
+    body:
+      - path: $.path
+        type: by_regex
+        value: ".+"
+response:
+  status: 200
+  headers:
+    Authorization: '{{{ request.headers.Authorization }}}'
+  body:
+    url: '{{{ request.url }}}'
+    path: '{{{ request.path }}}'
+    param: '{{{ request.query.mask }}}'
+    authorization: '{{{ request.headers.Authorization }}}'
+    message: 'Provided path in request is: {{{ jsonpath this "$.path" }}}.'
+    request: '{{{ request.body }}}'
