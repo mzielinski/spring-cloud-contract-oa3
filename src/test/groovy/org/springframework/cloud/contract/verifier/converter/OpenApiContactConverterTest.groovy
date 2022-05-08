@@ -1,6 +1,7 @@
 package org.springframework.cloud.contract.verifier.converter
 
 import org.springframework.cloud.contract.spec.Contract
+import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -24,12 +25,13 @@ class OpenApiContactConverterTest extends Specification {
         contracts.size() == expectedNumberOfContracts
 
         where:
-        filename                      || expectedNumberOfContracts
-        'verify_fraud_service.yml'    || 6
-        'verify_oa3.yml'              || 2
-        'verify_swagger_petstore.yml' || 3
-        'sample/payor.yml'            || 4
-        'sample/velo_payments.yml'    || 10
+        filename                             || expectedNumberOfContracts
+        'verify_oa3.yml'                     || 3
+        'verify_body_from_file_as_bytes.yml' || 1
+        'verify_fraud_service.yml'           || 6
+        'verify_swagger_petstore.yml'        || 3
+        'sample/payor.yml'                   || 4
+        'sample/velo_payments.yml'           || 10
     }
 
     @Unroll
@@ -57,7 +59,7 @@ class OpenApiContactConverterTest extends Specification {
 
         then:
         oa3Contracts.each { contract ->
-            assert contract == expectedContracts.find { it.name == contract.name }
+            contract == expectedContracts.find { it.name == contract.name }
         }
 
         where:
@@ -67,6 +69,27 @@ class OpenApiContactConverterTest extends Specification {
         'verify_oa3.yml'              || 'contract_oa3.yml'
     }
 
+    def 'should verify that bodyFromFileAsBytes is properly converted to contract'() {
+        when:
+        Contract oa3Contract = objectUnderTest.convertFrom(loadFile('openapi/verify_body_from_file_as_bytes.yml')).first()
+
+        then:
+        oa3Contract.name == 'Should verify body from file as bytes'
+        with(oa3Contract.request.body) {
+            verifyFromFileAsBytes(it.clientValue, 'request.json')
+            verifyFromFileAsBytes(it.serverValue, 'request.json')
+        }
+        with(oa3Contract.response.body) {
+            verifyFromFileAsBytes(it.clientValue, 'response.json')
+            verifyFromFileAsBytes(it.serverValue, 'response.json')
+        }
+    }
+
+    private static void verifyFromFileAsBytes(def value, String filename) {
+        assert value instanceof FromFileProperty
+        assert value.type == byte[].class
+        assert value.file.name == filename
+    }
 
     private static File loadFile(filepath) {
         new File(OpenApiContactConverterTest.classLoader.getResource(filepath).toURI())

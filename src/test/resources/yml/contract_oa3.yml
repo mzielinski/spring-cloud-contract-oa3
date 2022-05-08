@@ -210,7 +210,7 @@ request:
       - paramName: file
         fileName: filename.csv
         fileContent: file content
-        contentType: multipart/form-data
+        contentType: multipart/form-data;boundary=AaB03x
   matchers:
     multipart:
       params:
@@ -226,3 +226,12 @@ request:
             predefined: non_empty
 response:
   status: 201
+---
+name: Should verify body from file
+request:
+  method: POST
+  url: /check-body-from-file
+  bodyFromFile: request.json
+response:
+  status: 200
+  bodyFromFile: response.json

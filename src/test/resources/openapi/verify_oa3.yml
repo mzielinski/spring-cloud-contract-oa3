@@ -6,7 +6,7 @@ info:
 paths:
   /check-matchers/1:
     post:
-      summary: Dummmy endpoint with basic fields and matchers
+      summary: Checking basic fields and matchers
       operationId: matchers
       x-contracts:
         - contractId: matchers
@@ -206,7 +206,7 @@ paths:
                   maxOccurrence: 3
       responses:
         '200':
-          description: Good response
+          description: Successful response
           content:
             application/json:
               schema:
@@ -295,14 +295,14 @@ paths:
                 Content-Type: application/json
   /check-multipart:
     post:
-      summary: Dummmy for checking multipart
+      summary: Checking multipart
       operationId: multipart
       x-contracts:
         - contractId: multipart
           name: Should verify multipart
       requestBody:
         content:
-          multipart/form-data;boundary=AaB03x:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -326,7 +326,7 @@ paths:
                 - paramName: file
                   fileName: 'filename.csv'
                   fileContent: 'file content'
-                  contentType: 'multipart/form-data'
+                  contentType: 'multipart/form-data;boundary=AaB03x'
             matchers:
               multipart:
                 params:
@@ -345,3 +345,29 @@ paths:
           description: Accepted
           x-contracts:
             - contractId: multipart
+
+  /check-body-from-file:
+    post:
+      summary: Checking body from file or bytes
+      operationId: body-from-file
+      x-contracts:
+        - contractId: body-from-file
+          name: Should verify body from file
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        x-contracts:
+          - contractId: body-from-file
+            bodyFromFile: request.json
+      responses:
+        '200':
+          description: OK
+          x-contracts:
+            - contractId: body-from-file
+              bodyFromFile: response.json
+          content:
+            application/json:
+              schema:
+                type: string
