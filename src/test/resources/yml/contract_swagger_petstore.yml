@@ -2,7 +2,7 @@
 name: "Test List All Pets, No Limit"
 request:
   method: "GET"
-  url: "/pet"
+  urlPath: "/pet"
   queryParameters:
     limit: null
 response:
@@ -13,7 +13,7 @@ response:
 name: "Test List All Pets, Limit 5"
 request:
   method: "GET"
-  url: "/pet"
+  urlPath: "/pet"
   queryParameters:
     limit: 5
 response:
@@ -24,7 +24,7 @@ response:
 name: "Add a new Pet"
 request:
   method: "POST"
-  url: "/pet"
+  urlPath: "/pet"
   headers:
     Content-Type: "application/json"
   body:

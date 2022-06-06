@@ -84,7 +84,7 @@ class OpenApiContractConverter implements ContractConverter<Collection<PathItem>
                             def contractPath = (StringUtils.isEmpty(openApiContract.contractPath)) ? path : openApiContract.contractPath
 
                             yamlContract.request = new YamlContract.Request()
-                            yamlContract.request.url = contractPath
+                            yamlContract.request.urlPath = contractPath
 
                             if (pathItem?.get?.is(operation)) {
                                 yamlContract.request.method = "GET"
@@ -170,6 +170,12 @@ class OpenApiContractConverter implements ContractConverter<Collection<PathItem>
                                         if (contractBody?.cookies) {
                                             contractBody?.cookies?.each { cookieVal ->
                                                 yamlContract.request.cookies.put(cookieVal.key, cookieVal.value)
+                                            }
+                                        }
+
+                                        if (contractBody?.queryParameters) {
+                                            contractBody?.queryParameters?.each {
+                                                yamlContract.request.queryParameters.put(it.key, it.value)
                                             }
                                         }
 
@@ -374,18 +380,9 @@ class OpenApiContractConverter implements ContractConverter<Collection<PathItem>
                             mapper.setSerializationInclusion(JsonInclude.Include.ALWAYS)
                             mapper.writeValue(tempFile, yamlContract)
 
-                            log.debug(tempFile.getAbsolutePath())
+                            log.info(tempFile.absolutePath)
 
                             sccContracts.addAll(yamlToContracts.convertFrom(tempFile))
-                        } else {
-                            YamlContract ignored = new YamlContract()
-                            ignored.name = "Ignored Contract"
-                            ignored.ignored = true
-                            ignored.request = new YamlContract.Request()
-                            ignored.request.url = "/ignored"
-                            ignored.request.method = "GET"
-                            ignored.response = new YamlContract.Response()
-                          //  sccContracts.add(ignored)
                         }
                     }
                 }

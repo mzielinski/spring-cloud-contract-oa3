@@ -135,7 +135,6 @@ paths:
             matchers:
               url:
                 regex: /check-matchers/[0-9]
-              # does not work in SCC → issue: https://github.com/spring-cloud/spring-cloud-contract/issues/1778
               queryParameters:
                 - key: limit
                   type: equal_to

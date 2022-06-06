@@ -1,7 +1,7 @@
 name: Should verify basic fileds and matchers
 request:
   method: POST
-  url: /check-matchers/1
+  urlPath: /check-matchers/1
   headers:
     Content-Type: application/json
   cookies:
@@ -46,7 +46,6 @@ request:
   matchers:
     url:
       regex: /check-matchers/[0-9]
-    # does not work in SCC → issue: https://github.com/spring-cloud/spring-cloud-contract/issues/1778
     queryParameters:
       - key: limit
         type: equal_to
@@ -199,7 +198,7 @@ response:
 name: Should verify multipart
 request:
   method: POST
-  url: /check-multipart
+  urlPath: /check-multipart
   headers:
     Content-Type: multipart/form-data;boundary=AaB03x
   multipart:
@@ -230,7 +229,7 @@ response:
 name: Should verify body from file
 request:
   method: POST
-  url: /check-body-from-file
+  urlPath: /check-body-from-file
   headers:
     Content-Type: 'application/json'
   bodyFromFile: request.json
@@ -243,7 +242,7 @@ response:
 name: Should verify reference taken from request
 request:
   method: POST
-  url: /check-references-from-request
+  urlPath: /check-references-from-request
   queryParameters:
     mask: true
   headers:

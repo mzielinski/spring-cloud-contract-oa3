@@ -2,7 +2,7 @@
 name: "Should return all frauds - should count all frauds"
 request:
   method: "GET"
-  url: "/frauds"
+  urlPath: "/frauds"
 response:
   status: 200
   headers:
@@ -13,7 +13,7 @@ response:
 name: "Should reject request because loan amount is missing"
 request:
   method: "PUT"
-  url: "/fraudcheck"
+  urlPath: "/fraudcheck"
   headers:
     Content-Type: 'application/json'
   body:
@@ -24,7 +24,7 @@ response:
 name: "Should accept loan amount"
 request:
   method: "PUT"
-  url: "/fraudcheck"
+  urlPath: "/fraudcheck"
   headers:
     Content-Type: 'application/json'
   body:
@@ -45,7 +45,7 @@ response:
 name: "Should mark client as fraud"
 request:
   method: "PUT"
-  url: "/fraudcheck"
+  urlPath: "/fraudcheck"
   headers:
     Content-Type: 'application/json'
   body:
@@ -67,7 +67,7 @@ response:
 name: "Should return OKEY status for good-guy client ID"
 request:
   method: "GET"
-  url: "/frauds/good-guy"
+  urlPath: "/frauds/good-guy"
   queryParameters:
     name: "good-guy"
 response:
@@ -81,7 +81,7 @@ priority: 1
 name: "Should return FRAUD status for bad-guy client ID"
 request:
   method: "GET"
-  url: "/frauds/bad-guy"
+  urlPath: "/frauds/bad-guy"
   queryParameters:
     name: "bad-guy"
 response:
