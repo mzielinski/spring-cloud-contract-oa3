@@ -7,6 +7,8 @@ request:
     limit: null
 response:
   status: 200
+  headers:
+    Content-Type: 'application/json'
 ---
 name: "Test List All Pets, Limit 5"
 request:
@@ -16,12 +18,16 @@ request:
     limit: 5
 response:
   status: 200
+  headers:
+    Content-Type: 'application/json'
 ---
 name: "Add a new Pet"
 request:
   method: "POST"
   url: "/pet"
+  headers:
+    Content-Type: "application/json"
   body:
     name: "Jake"
 response:
-  status: 0
+  status: 201

@@ -98,6 +98,12 @@ class OpenApiContractConverter implements ContractConverter<Collection<PathItem>
                                 yamlContract?.request?.method = "PATCH"
                             }
 
+                            // why there is list instead o single value
+                            String contentType = operation.requestBody?.content?.keySet() ?[0]
+                            if (contentType) {
+                                yamlContract.request.headers.put('Content-Type', contentType)
+                            }
+
                             if (openApiContract?.request?.queryParameters) {
                                 openApiContract?.request?.queryParameters.each { queryParameter ->
                                     yamlContract.request.queryParameters.put(queryParameter.key, queryParameter.value)
@@ -286,6 +292,12 @@ class OpenApiContractConverter implements ContractConverter<Collection<PathItem>
                                                 yamlContract.response.body = responseContract?.body
                                                 yamlContract.response.bodyFromFile = responseContract?.bodyFromFile
                                                 yamlContract.response.bodyFromFileAsBytes = responseContract?.bodyFromFileAsBytes
+
+                                                // why there is list instead o single value
+                                                String responseContentType = openApiResponse?.value?.content?.keySet() ?[0]
+                                                if (responseContentType) {
+                                                    yamlContract.response.headers.put('Content-Type', responseContentType)
+                                                }
 
                                                 responseContract.headers?.each { responseHeader ->
                                                     yamlContract.response.headers.put(responseHeader.key, responseHeader.value)

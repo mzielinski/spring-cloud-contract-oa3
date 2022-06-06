@@ -105,8 +105,6 @@ paths:
               type: string
         x-contracts:
           - contractId: matchers
-            headers:
-              Content-Type: application/json
             body:
               duck: 123
               alpha: "abc"
@@ -291,8 +289,6 @@ paths:
                   - path: $.nullValue
                     type: by_null
                     value: null
-              headers:
-                Content-Type: application/json
   /check-multipart:
     post:
       summary: Checking multipart

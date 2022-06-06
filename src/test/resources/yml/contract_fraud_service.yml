@@ -5,6 +5,8 @@ request:
   url: "/frauds"
 response:
   status: 200
+  headers:
+    Content-Type: 'application/json'
   body:
     count: 3
 ---
@@ -12,6 +14,8 @@ name: "Should reject request because loan amount is missing"
 request:
   method: "PUT"
   url: "/fraudcheck"
+  headers:
+    Content-Type: 'application/json'
   body:
     clientId: 4000000000
 response:
@@ -21,6 +25,8 @@ name: "Should accept loan amount"
 request:
   method: "PUT"
   url: "/fraudcheck"
+  headers:
+    Content-Type: 'application/json'
   body:
     clientId: 1000000000
     loanAmount: 500
@@ -31,6 +37,8 @@ request:
         value: "1[0-9]{9}"
 response:
   status: 200
+  headers:
+    Content-Type: 'application/json'
   body:
     fraudCheckStatus: "OK"
 ---
@@ -38,6 +46,8 @@ name: "Should mark client as fraud"
 request:
   method: "PUT"
   url: "/fraudcheck"
+  headers:
+    Content-Type: 'application/json'
   body:
     clientId: 2000000000
     loanAmount: 99999
@@ -48,6 +58,8 @@ request:
         value: "2[0-9]{9}"
 response:
   status: 200
+  headers:
+    Content-Type: 'application/json'
   body:
     fraudCheckStatus: "FRAUD"
     rejectionReason: "Amount too high"
@@ -60,10 +72,10 @@ request:
     name: "good-guy"
 response:
   status: 200
-  body:
-    value: "Don't worry, you're not a fraud"
   headers:
     Content-Type: "{{{ request.headers.Content-Type.0 }}};charset=UTF-8"
+  body:
+    value: "Don't worry, you're not a fraud"
 priority: 1
 ---
 name: "Should return FRAUD status for bad-guy client ID"
@@ -74,7 +86,7 @@ request:
     name: "bad-guy"
 response:
   status: 403
-  body:
-    value: "Sorry but you're a fraud"
   headers:
     Content-Type: "{{{ request.headers.Content-Type.0 }}}"
+  body:
+    value: "Sorry but you're a fraud"

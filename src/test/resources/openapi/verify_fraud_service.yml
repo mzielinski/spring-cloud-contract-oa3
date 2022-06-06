@@ -69,8 +69,6 @@ paths:
               body:
                 fraudCheckStatus: 'OK'
             - contractId: 200-fraud-client
-              # Status inferred from OpenAPI
-              # Headers - contentType can be inferred from OpenAPI response object
               body:
                 fraudCheckStatus: 'FRAUD'
                 rejectionReason: 'Amount too high'

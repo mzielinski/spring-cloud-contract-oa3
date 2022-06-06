@@ -231,9 +231,13 @@ name: Should verify body from file
 request:
   method: POST
   url: /check-body-from-file
+  headers:
+    Content-Type: 'application/json'
   bodyFromFile: request.json
 response:
   status: 200
+  headers:
+    Content-Type: 'application/json'
   bodyFromFile: response.json
 ---
 name: Should verify reference taken from request
@@ -243,6 +247,7 @@ request:
   queryParameters:
     mask: true
   headers:
+    Content-Type: 'application/json'
     Authorization: 'Basic dGVzdDp0ZXN0'
   body:
     path: '/etc/passwd'
@@ -261,6 +266,7 @@ request:
 response:
   status: 200
   headers:
+    Content-Type: 'application/json'
     Authorization: '{{{ request.headers.Authorization }}}'
   body:
     url: '{{{ request.url }}}'

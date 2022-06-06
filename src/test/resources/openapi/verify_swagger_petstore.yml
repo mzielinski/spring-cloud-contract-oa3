@@ -97,27 +97,9 @@ paths:
       description: Add a new pet to the store
       operationId: addPet
       x-contracts:
-        - contractId: 1
+        - contractId: 3
           name: Add a new Pet
           serviceName: serviceC
-          requestHeaders:
-            - Content-type: application/json
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'
-        '405':
-          description: Invalid input
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
       requestBody:
         description: Create a new pet in the store
         required: true
@@ -132,9 +114,21 @@ paths:
             schema:
               $ref: '#/components/schemas/Pet'
         x-contracts:
-          - contractId: 1
+          - contractId: 3
             body:
               name: Jake
+      responses:
+        '201':
+          description: Successful operation
+          x-contracts:
+            - contractId: 3
+        '405':
+          description: Invalid input
+      security:
+        - petstore_auth:
+            - 'write:pets'
+            - 'read:pets'
+
     put:
       tags:
         - pet
