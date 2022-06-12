@@ -98,6 +98,19 @@ paths:
           x-contracts:
             - contractId: matchers
               value: 'cookie-bar-value'
+        - name: headerFoo
+          in: header
+          required: false
+          schema:
+            type: string
+          x-contracts:
+            - contractId: matchers
+              value: "barTest"
+              matchers:
+                - regex: "bar.*"
+                  predefined: only_alpha_unicode
+                  command: "thing($it)"
+                  regexType: "as_string"
       requestBody:
         content:
           application/json:

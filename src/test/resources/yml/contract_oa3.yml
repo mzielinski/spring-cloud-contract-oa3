@@ -4,6 +4,7 @@ request:
   urlPath: /check-matchers/1
   headers:
     Content-Type: application/json
+    headerFoo: 'barTest'
   cookies:
     cookieFoo: 1
     cookieBar: 'cookie-bar-value'
@@ -75,6 +76,11 @@ request:
     headers:
       - key: Content-Type
         regex: "application/json.*"
+      - key: headerFoo
+        regex: "bar.*"
+        predefined: only_alpha_unicode
+        command: "thing($it)"
+        regexType: "as_string"
     body:
       - path: $.duck
         type: by_regex

@@ -140,14 +140,14 @@ class OpenApiContractConverter implements ContractConverter<Collection<PathItem>
                                             yamlContract.request.headers.put(openApiParam.name, contractParam.value)
 
                                             if (contractParam.matchers) {
-                                                contractParam?.matchers?.each { headerMatcher ->
+                                                contractParam?.matchers?.each { contractMatcher ->
                                                     YamlContract.HeadersMatcher headersMatcher = new YamlContract.HeadersMatcher()
                                                     headersMatcher.key = openApiParam.name
-                                                    headersMatcher.regex = headerMatcher.regex
-                                                    headersMatcher.predefined = getPredefinedRegexFromString(headerMatcher.predefined)
-                                                    headersMatcher.command = headerMatcher.command
-                                                    headersMatcher.regexType = getRegexTypeFromString(headerMatcher.regexType)
-                                                    yamlContract.request.matchers.headers.add(headerMatcher)
+                                                    headersMatcher.regex = contractMatcher.regex
+                                                    headersMatcher.predefined = getPredefinedRegexFromString(contractMatcher.predefined)
+                                                    headersMatcher.command = contractMatcher.command
+                                                    headersMatcher.regexType = getRegexTypeFromString(contractMatcher.regexType)
+                                                    yamlContract.request.matchers.headers.add(headersMatcher)
                                                 }
                                             }
                                         }
