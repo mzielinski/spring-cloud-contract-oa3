@@ -86,6 +86,10 @@ class OpenApiContractConverter implements ContractConverter<Collection<PathItem>
                             yamlContract.request = new YamlContract.Request()
                             yamlContract.request.urlPath = contractPath
 
+                            if (openApiContract.headers != null) {
+                                yamlContract.request.headers.putAll(openApiContract.headers)
+                            }
+
                             if (pathItem?.get?.is(operation)) {
                                 yamlContract.request.method = "GET"
                             } else if (pathItem?.put?.is(operation)) {

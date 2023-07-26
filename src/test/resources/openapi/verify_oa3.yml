@@ -11,6 +11,8 @@ paths:
       x-contracts:
         - contractId: matchers
           name: Should verify basic fileds and matchers
+          headers:
+            headerFoo: 'should be overridden by definition in parameters'
       parameters:
         - name: limit
           in: query

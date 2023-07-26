@@ -26,6 +26,7 @@ class OpenApiContactConverterTest extends Specification {
 
         where:
         filename                             || expectedNumberOfContracts
+        'verify_playground.yml'              || 1
         'verify_oa3.yml'                     || 4
         'verify_body_from_file_as_bytes.yml' || 1
         'verify_fraud_service.yml'           || 6
@@ -67,6 +68,7 @@ class OpenApiContactConverterTest extends Specification {
         'verify_swagger_petstore.yml' || 'contract_swagger_petstore.yml'
         'verify_fraud_service.yml'    || 'contract_fraud_service.yml'
         'verify_oa3.yml'              || 'contract_oa3.yml'
+        'verify_playground.yml'       || 'contract_playground.yml'
     }
 
     def 'should verify that bodyFromFileAsBytes is properly converted to contract'() {
