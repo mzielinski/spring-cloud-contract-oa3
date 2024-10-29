@@ -3,60 +3,58 @@ package org.springframework.cloud.contract.verifier.converter
 import spock.lang.Specification
 import spock.util.environment.RestoreSystemProperties
 
-/**
- * Created by jt on 2019-04-02.
- */
 class ServiceNameTest extends Specification {
 
     static final URL PETSTORE_URL = OpenApiContactConverterTest.getResource('/openapi/verify_swagger_petstore.yml')
     static final File PETSTORE_FILE = new File(PETSTORE_URL.toURI())
 
+    ServiceNameVerifier serviceVerifier = new ServiceNameVerifier()
     OpenApiContractConverter contactConverter = new OpenApiContractConverter()
 
     def 'Test Contract Not Set'() {
         expect:
-        contactConverter.checkServiceEnabled(null)
+        serviceVerifier.checkServiceEnabled(null)
     }
 
     def 'Test Contract Set, System Param Not Set'() {
         expect:
-        contactConverter.checkServiceEnabled('FOO')
+        serviceVerifier.checkServiceEnabled('FOO')
     }
 
     @RestoreSystemProperties
     def 'Test Contract Set, Should Match one value'() {
         given:
-        System.properties.setProperty(OpenApiContractConverter.SERVICE_NAME_KEY, 'ServiceA')
+        System.properties.setProperty(ServiceNameVerifier.SERVICE_NAME_KEY, 'ServiceA')
 
         expect:
-        contactConverter.checkServiceEnabled('ServiceA')
+        serviceVerifier.checkServiceEnabled('ServiceA')
     }
 
     @RestoreSystemProperties
     def 'Test Contract Set, Should NOT Match one value'() {
         given:
-        System.properties.setProperty(OpenApiContractConverter.SERVICE_NAME_KEY, 'ServiceA')
+        System.properties.setProperty(ServiceNameVerifier.SERVICE_NAME_KEY, 'ServiceA')
 
         expect:
-        !contactConverter.checkServiceEnabled('ServiceB')
+        !serviceVerifier.checkServiceEnabled('ServiceB')
     }
 
     @RestoreSystemProperties
     def 'Test Contract Set, Should Match List of Values'() {
         given:
-        System.properties.setProperty(OpenApiContractConverter.SERVICE_NAME_KEY, 'ServiceA,ServiceB')
+        System.properties.setProperty(ServiceNameVerifier.SERVICE_NAME_KEY, 'ServiceA,ServiceB')
 
         expect:
-        contactConverter.checkServiceEnabled('ServiceB')
+        serviceVerifier.checkServiceEnabled('ServiceB')
     }
 
     @RestoreSystemProperties
     def 'Test Contract Set, Should Match List of Values with spaces'() {
         given:
-        System.properties.setProperty(OpenApiContractConverter.SERVICE_NAME_KEY, 'ServiceA,  ServiceB')
+        System.properties.setProperty(ServiceNameVerifier.SERVICE_NAME_KEY, 'ServiceA,  ServiceB')
 
         expect:
-        contactConverter.checkServiceEnabled('ServiceB')
+        serviceVerifier.checkServiceEnabled('ServiceB')
     }
 
     def 'Test no system parameters'() {
@@ -68,7 +66,7 @@ class ServiceNameTest extends Specification {
     @RestoreSystemProperties
     def 'test Service A'() {
         given:
-        System.properties.setProperty(OpenApiContractConverter.SERVICE_NAME_KEY, 'serviceA')
+        System.properties.setProperty(ServiceNameVerifier.SERVICE_NAME_KEY, 'serviceA')
 
         expect:
         def contracts = contactConverter.convertFrom(PETSTORE_FILE)
@@ -78,7 +76,7 @@ class ServiceNameTest extends Specification {
     @RestoreSystemProperties
     def 'test Service A and B'() {
         given:
-        System.properties.setProperty(OpenApiContractConverter.SERVICE_NAME_KEY, 'serviceA, serviceB')
+        System.properties.setProperty(ServiceNameVerifier.SERVICE_NAME_KEY, 'serviceA, serviceB')
 
         expect:
         def contracts = contactConverter.convertFrom(PETSTORE_FILE)
@@ -88,7 +86,7 @@ class ServiceNameTest extends Specification {
     @RestoreSystemProperties
     def 'test Service A and C'() {
         given:
-        System.properties.setProperty(OpenApiContractConverter.SERVICE_NAME_KEY, 'serviceA, serviceC')
+        System.properties.setProperty(ServiceNameVerifier.SERVICE_NAME_KEY, 'serviceA, serviceC')
 
         expect:
         def contracts = contactConverter.convertFrom(PETSTORE_FILE)
@@ -98,7 +96,7 @@ class ServiceNameTest extends Specification {
     @RestoreSystemProperties
     def 'test Service A, B and C'() {
         given:
-        System.properties.setProperty(OpenApiContractConverter.SERVICE_NAME_KEY, 'serviceA,serviceB, serviceC')
+        System.properties.setProperty(ServiceNameVerifier.SERVICE_NAME_KEY, 'serviceA,serviceB, serviceC')
 
         expect:
         def contracts = contactConverter.convertFrom(PETSTORE_FILE)

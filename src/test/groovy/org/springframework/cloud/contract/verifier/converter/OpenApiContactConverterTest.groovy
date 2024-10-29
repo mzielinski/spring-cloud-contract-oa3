@@ -11,6 +11,15 @@ class OpenApiContactConverterTest extends Specification {
     YamlContractConverter yamlContractConverter = new YamlContractConverter()
 
     @Unroll
+    def 'should not accept valid oa3 documentations without contracts'() {
+        given:
+        File file = loadFile("openapi/verify_swagger_petstore_without_contracts.yml")
+
+        expect:
+        !objectUnderTest.isAccepted(file)
+    }
+
+    @Unroll
     def 'should accept valid oa3 documentations #filename'() {
         given:
         File file = loadFile("openapi/$filename")
