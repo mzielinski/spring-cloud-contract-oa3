@@ -17,7 +17,7 @@ public class OpenApiContractConverter implements ContractConverter<Collection<Pa
 
     private final TempYamlToContracts tempYamlToContracts = new TempYamlToContracts();
     private final Oa3ToScc oa3ToScc = new Oa3ToScc();
-    private final Oa3Parser oa3Parser = new YamlOa3Parser();
+    private final Oa3Parser oa3Parser = new Oa3Parser();
 
     @Override
     public boolean isAccepted(File file) {

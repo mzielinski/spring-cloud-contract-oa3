@@ -1,5 +1,7 @@
 package org.springframework.cloud.contract.verifier.converter
 
+import groovy.json.JsonOutput
+import groovy.yaml.YamlSlurper
 import org.springframework.cloud.contract.spec.Contract
 import org.springframework.cloud.contract.spec.internal.FromFileProperty
 import spock.lang.Specification
@@ -63,12 +65,21 @@ class OpenApiContactConverterTest extends Specification {
 
     @Unroll
     def 'should verify that contracts generated from #oa3Filename documentation are the same as expected #contractFilename'() {
-        when:
+        given:
+        File oa3Yaml = loadFile("openapi/$oa3Filename")
         Collection<Contract> expectedContracts = yamlContractConverter.convertFrom(loadFile("yml/$contractFilename"))
-        Collection<Contract> oa3Contracts = objectUnderTest.convertFrom(loadFile("openapi/$oa3Filename"))
 
-        then:
-        oa3Contracts.each { contract ->
+        expect: 'YAML support'
+        objectUnderTest.convertFrom(oa3Yaml).each { contract ->
+            assert contract == expectedContracts.find { it.name == contract.name }
+        }
+
+        when:
+        String filename = oa3Yaml.name.replaceAll('.yml', '.json')
+        File jsonFile = saveToFile(filename, convertYamlToJson(oa3Yaml))
+
+        then: 'JSON support'
+        objectUnderTest.convertFrom(jsonFile).each { contract ->
             assert contract == expectedContracts.find { it.name == contract.name }
         }
 
@@ -104,5 +115,20 @@ class OpenApiContactConverterTest extends Specification {
 
     private static File loadFile(filepath) {
         new File(OpenApiContactConverterTest.classLoader.getResource(filepath).toURI())
+    }
+
+    private static File saveToFile(String filename, String content) {
+        File targetDir = new File('target/test-classes/openapi-json')
+        targetDir.mkdir()
+        File jsonFile = new File(targetDir, filename)
+        jsonFile.withWriter('UTF-8') { writer ->
+            writer.write(content)
+        }
+        return jsonFile
+    }
+
+    private static String convertYamlToJson(File yamlFile) {
+        def yamlContent = new YamlSlurper().parse(yamlFile)
+        JsonOutput.prettyPrint(JsonOutput.toJson(yamlContent))
     }
 }

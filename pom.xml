@@ -34,8 +34,9 @@
         <spring.cloud.contract.version>3.1.10</spring.cloud.contract.version>
         <spock-spring.version>2.3-groovy-3.0</spock-spring.version>
         <groovy.version>3.0.22</groovy.version>
-        <swagger-parser.version>2.0.30</swagger-parser.version>
+        <swagger-parser.version>2.1.22</swagger-parser.version>
         <slf4j.version>1.6.1</slf4j.version>
+        <jackson.version>2.16.0</jackson.version>
 
         <!-- Sonar -->
         <sonar.organization>mzielinski</sonar.organization>
@@ -58,6 +59,13 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-contract-spec-java</artifactId>
             <version>${spring.cloud.contract.version}</version>
+        </dependency>
+
+        <!-- jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <!-- logger -->
@@ -86,7 +94,7 @@
             <version>3.2.2</version>
         </dependency>
 
-        <!-- test -->
+        <!-- test groovy -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
@@ -99,6 +107,14 @@
             <version>${groovy.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-yaml</artifactId>
+            <version>${groovy.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- test spock -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
