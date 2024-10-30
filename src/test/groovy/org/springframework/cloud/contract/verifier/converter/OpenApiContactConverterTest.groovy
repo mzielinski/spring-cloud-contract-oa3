@@ -15,7 +15,7 @@ class OpenApiContactConverterTest extends Specification {
     @Unroll
     def 'should not accept valid oa3 documentations without contracts'() {
         given:
-        File file = loadFile("openapi/verify_swagger_petstore_without_contracts.yml")
+        File file = loadFile('openapi/verify_swagger_petstore_without_contracts.yml')
 
         expect:
         !objectUnderTest.isAccepted(file)
@@ -89,6 +89,7 @@ class OpenApiContactConverterTest extends Specification {
         'verify_fraud_service.yml'    || 'contract_fraud_service.yml'
         'verify_oa3.yml'              || 'contract_oa3.yml'
         'verify_playground.yml'       || 'contract_playground.yml'
+        'verify_path_parameter.yml'   || 'contract_path_parameter.yml'
     }
 
     def 'should verify that bodyFromFileAsBytes is properly converted to contract'() {
