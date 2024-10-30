@@ -22,7 +22,7 @@ class Oa3ToSccRequest {
 
     YamlContract.Request convert(Map<String, Object> contract) {
         YamlContract.Request yamlRequest = new YamlContract.Request();
-        yamlRequest.urlPath = getOrDefault(contract, CONTRACT_PATH, spec.path());
+        yamlRequest.urlPath = getOrDefault(contract, CONTRACT_PATH, calculatePath());
         yamlRequest.method = spec.httpMethod();
 
         // request headers
@@ -111,6 +111,20 @@ class Oa3ToSccRequest {
         convertMatchers(getOrDefault(requestBody, MATCHERS, EMPTY_MAP), yamlRequest);
 
         return yamlRequest;
+    }
+
+    private String calculatePath() {
+        return spec.operationParameters().stream()
+                .filter(parameter -> PATH.equals(parameter.getIn()))
+                .reduce(spec.path(), (currentPath, parameter) -> {
+                    String parameterName = parameter.getName();
+                    return getOrDefault(parameter.getExtensions(), X_CONTRACTS, EMPTY_LIST).stream()
+                            .filter(contracts -> contractId.equals(get(contracts, CONTRACT_ID)))
+                            .map(contracts -> currentPath.replace("{" + parameterName + "}", get(contracts, VALUE)))
+                            .findFirst()
+                            .orElse(currentPath);
+
+                },  (p1, p2) -> p1);
     }
 
     private void convertMatchers(Map<String, Object> matchers, YamlContract.Request request) {
