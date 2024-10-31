@@ -34,7 +34,7 @@
         <spock-spring.version>2.3-groovy-3.0</spock-spring.version>
         <groovy.version>3.0.22</groovy.version>
         <swagger-parser.version>2.1.22</swagger-parser.version>
-        <slf4j.version>1.6.1</slf4j.version>
+        <slf4j.version>2.0.16</slf4j.version>
         <jackson.version>2.16.0</jackson.version>
 
         <!-- Sonar -->
