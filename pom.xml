@@ -30,7 +30,7 @@
 
         <!-- Versions of libs -->
         <spring.version>6.1.14</spring.version>
-        <spring.cloud.contract.version>3.1.10</spring.cloud.contract.version>
+        <spring.cloud.contract.version>4.1.4</spring.cloud.contract.version>
         <spock-spring.version>2.3-groovy-3.0</spock-spring.version>
         <groovy.version>3.0.22</groovy.version>
         <swagger-parser.version>2.1.22</swagger-parser.version>
