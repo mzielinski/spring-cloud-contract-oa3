@@ -73,7 +73,7 @@ testing with [**Spring Cloud Contract**](https://spring.io/projects/spring-cloud
 
 ## Explore the Example Project
 
-[Spring-Cloud-Contract-OA3-Examples](git@github.com:mzielinski/spring-cloud-contract-oa3-examples.git) repository contains an example project that demonstrates the complete setup using a sample OpenAPI specification.
+[Spring-Cloud-Contract-OA3-Examples](https://github.com/mzielinski/spring-cloud-contract-oa3-examples) repository contains an example project that demonstrates the complete setup using a sample OpenAPI specification.
 You can explore the example to understand how to configure and use this extension with Spring Cloud Contract.
 
 ## Versioning
