@@ -10,7 +10,8 @@ both **YAML** and **JSON** formats, aiming to provide a **Single Source of Truth
 definitions.
 
 This extension is built on top of
-a [springframeworkguru repository](https://github.com/springframeworkguru/spring-cloud-contract-oa3 ), which is no longer
+a [springframeworkguru repository](https://github.com/springframeworkguru/spring-cloud-contract-oa3 ), which is no
+longer
 maintained. The entire project was rewritten in **Java 17**, moving away from the previous **Groovy**-based
 implementation. The rewrite also introduced new features and comprehensive tests to ensure stability.
 
@@ -27,77 +28,148 @@ implementation. The rewrite also introduced new features and comprehensive tests
 
 ## Usage
 
-1. **Define your OpenAPI Specification** with contracts embedded in the `x-contract` extensions. These extensions
-   specify details about the API's expected behavior for contract testing.
-
-```yaml
-
-
-```
-
-[Sample OpenAPI 3.0 Specification used in the tests](https://github.com/mzielinski/spring-cloud-contract-oa3/tree/master/src/test/resources/openapi)
-
-2. **Define Spring Cloud Contract Configuration** to your project
-    - **Gradle**:
-     ```groovy
-     repositories {
-       maven { url 'https://jitpack.io' }
-     }
-   
-     dependencies {
-       testImplementation("com.github.mzielinski:spring-cloud-contract-oa3:$springCloudContractOa3Version")
-     }
-     
-     contracts {
-         // Path to the directory containing your OpenAPI specifications with x-contract extensions
-         contractsDslDir = new File("__path_to_dir_with_openapi_specifications__")
-         // (...) Standard Spring Cloud Configuration
-     }
-     ``` 
-    - **Maven**:
-     ```xml
-     <pluginRepositories>
-         <pluginRepository>
-             <id>jitpack.io</id>
-             <url>https://jitpack.io</url>
-         </pluginRepository>
-     </pluginRepositories>
-   
-     <plugin>
-         <groupId>org.springframework.cloud</groupId>
-         <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-         <version>${spring-cloud-contract.version}</version>
-         <executions>
-             <execution>
-                 <goals>
-                     <goal>convert</goal>
-                     <goal>generateStubs</goal>
-                     <goal>generateTests</goal>
-                 </goals>
-             </execution>
-         </executions>
-         <configuration>
-             <packageWithBaseClasses>com.mzielinski.sccoa3.examples</packageWithBaseClasses>
-             <contractsDirectory>${project.basedir}/src/main/resources/openapi</contractsDirectory>
-            <testFramework>JUNIT5</testFramework>
-         </configuration>
-         <dependencies>
-             <dependency>
-                 <groupId>com.github.mzielinski</groupId>
-                 <artifactId>spring-cloud-contract-oa3</artifactId>
-                 <version>${spring-cloud-contract-oa3.version}</version>
-             </dependency>
-         </dependencies>
-     </plugin>
-     ```
-
 This extension allows you to centralize your contract and API definition processes, streamlining API development and
 testing with [**Spring Cloud Contract**](https://spring.io/projects/spring-cloud-contract).
 
-## Explore the Example Project
+### Define OpenAPI Specification
 
-[Spring-Cloud-Contract-OA3-Examples](https://github.com/mzielinski/spring-cloud-contract-oa3-examples) repository contains an example project that demonstrates the complete setup using a sample OpenAPI specification.
-You can explore the example to understand how to configure and use this extension with Spring Cloud Contract.
+Define OpenAPI with contracts embedded in the `x-contract` extensions. These extensions specify details about the API's
+expected behavior for contract testing.
+
+[Sample OpenAPI 3.0 Specification used in the tests](https://github.com/mzielinski/spring-cloud-contract-oa3/tree/master/src/test/resources/openapi)
+
+Basic example in YAML. An example in JSON can also be found at the link above.
+
+```yaml
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  description: "Example how to define x-contract inside OpenAPI 3.0"
+  title: Spring Cloud Contract OpenAPI 3.0 Basic Example
+paths:
+  /v1/events:
+    get:
+      operationId: 'conference-events'
+      summary: Retrieve all events for given day
+      parameters:
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+            pattern: "\\d{4}-\\d{2}-\\d{2}"
+            example: '2024-12-13'
+          required: true
+          x-contracts:
+            - contractId: 200
+              value: '2024-12-13'
+      x-contracts:
+        - contractId: 200
+          name: Should return events for given day with HTTP status code 200
+      responses:
+        '200':
+          description: return conference events for given day
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/event-response'
+          x-contracts:
+            - contractId: 200
+              body:
+                date: '2024-12-13'
+                events: [ {
+                  name: 'Consumer-Driven Contract Workshops'
+                } ]
+              headers:
+                Content-Type: application/json
+
+components:
+  schemas:
+    event-response:
+      required:
+        - date
+        - events
+      type: object
+      properties:
+        date:
+          description: date of events
+          type: string
+          pattern: "\\d{4}-\\d{2}-\\d{2}"
+          example: '2024-12-13'
+        events:
+          description: list of events
+          type: array
+          items:
+            $ref: '#/components/schemas/event'
+
+    event:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'Consumer-Driven Contract Workshops'
+```
+
+### Define Spring Cloud Contract Configuration
+
+- **Gradle**
+
+```groovy
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    testImplementation("com.github.mzielinski:spring-cloud-contract-oa3:$springCloudContractOa3Version")
+}
+
+contracts {
+    // Path to the directory containing your OpenAPI specifications with x-contract extensions
+    contractsDslDir = new File("__path_to_dir_with_openapi_specifications__")
+    // (...) Standard Spring Cloud Configuration
+}
+``` 
+
+- **Maven**:
+
+```xml
+
+<pluginRepositories>
+    <pluginRepository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </pluginRepository>
+</pluginRepositories>
+
+<plugin>
+<groupId>org.springframework.cloud</groupId>
+<artifactId>spring-cloud-contract-maven-plugin</artifactId>
+<version>${spring-cloud-contract.version}</version>
+<executions>
+    <execution>
+        <goals>
+            <goal>convert</goal>
+            <goal>generateStubs</goal>
+            <goal>generateTests</goal>
+        </goals>
+    </execution>
+</executions>
+<configuration>
+    <packageWithBaseClasses>com.mzielinski.sccoa3.examples</packageWithBaseClasses>
+    <contractsDirectory>${project.basedir}/src/main/resources/openapi</contractsDirectory>
+    <testFramework>JUNIT5</testFramework>
+</configuration>
+<dependencies>
+    <dependency>
+        <groupId>com.github.mzielinski</groupId>
+        <artifactId>spring-cloud-contract-oa3</artifactId>
+        <version>${spring-cloud-contract-oa3.version}</version>
+    </dependency>
+</dependencies>
+</plugin>
+```
 
 ## Versioning
 
@@ -111,6 +183,12 @@ extension, choose the one that corresponds to the version of Spring Cloud Contra
   implemented).
 - **AsyncAPI Support**: Plans to support **AsyncAPI** for asynchronous operations, allowing contract-based testing of
   event-driven architectures.
+
+## Explore the full Example Project with Producer and Consumer side
+
+[Spring-Cloud-Contract-OA3-Examples](https://github.com/mzielinski/spring-cloud-contract-oa3-examples) repository
+contains an example project that demonstrates the complete setup using a sample OpenAPI specification.
+You can explore the example to understand how to configure and use this extension with Spring Cloud Contract.
 
 ## Contributing
 
