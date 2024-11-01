@@ -1,6 +1,6 @@
 # Spring Cloud Contract OpenAPI 3.0 Contract Converter
 
-[![](https://jitpack.io/v/mzielinski/spring-cloud-contract-oa3.svg)](https://jitpack.io/#mzielinski/spring-cloud-contract-oa3)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.mzielinski/spring-cloud-contract-oa3.svg)](https://search.maven.org/artifact/io.github.mzielinski/spring-cloud-contract-oa3)
 [![CircleCI](https://circleci.com/gh/mzielinski/spring-cloud-contract-oa3.svg?style=svg)](https://circleci.com/gh/mzielinski/spring-cloud-contract-oa3)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mzielinski_spring-cloud-contract-oa3&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mzielinski_spring-cloud-contract-oa3)
 
@@ -14,6 +14,10 @@ a [springframeworkguru repository](https://github.com/springframeworkguru/spring
 longer
 maintained. The entire project was rewritten in **Java 17**, moving away from the previous **Groovy**-based
 implementation. The rewrite also introduced new features and comprehensive tests to ensure stability.
+
+## Releases
+
+[List of all releases](https://github.com/mzielinski/spring-cloud-contract-oa3/releases)
 
 ## Key Features
 
@@ -117,12 +121,8 @@ components:
 - **Gradle**
 
 ```groovy
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-
 dependencies {
-    testImplementation("com.github.mzielinski:spring-cloud-contract-oa3:$springCloudContractOa3Version")
+    testImplementation("io.github.mzielinski:spring-cloud-contract-oa3:$springCloudContractOa3Version")
 }
 
 contracts {
@@ -135,13 +135,6 @@ contracts {
 - **Maven**:
 
 ```xml
-
-<pluginRepositories>
-    <pluginRepository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </pluginRepository>
-</pluginRepositories>
 
 <plugin>
     <groupId>org.springframework.cloud</groupId>
@@ -163,7 +156,7 @@ contracts {
     </configuration>
     <dependencies>
         <dependency>
-            <groupId>com.github.mzielinski</groupId>
+            <groupId>io.github.mzielinski</groupId>
             <artifactId>spring-cloud-contract-oa3</artifactId>
             <version>${spring-cloud-contract-oa3.version}</version>
         </dependency>
@@ -189,6 +182,14 @@ extension, choose the one that corresponds to the version of Spring Cloud Contra
 [Spring-Cloud-Contract-OA3-Examples](https://github.com/mzielinski/spring-cloud-contract-oa3-examples) repository
 contains an example project that demonstrates the complete setup using a sample OpenAPI specification.
 You can explore the example to understand how to configure and use this extension with Spring Cloud Contract.
+
+## Jitpack vs Maven Central
+
+Since version [4.1.1.2](https://github.com/mzielinski/spring-cloud-contract-oa3/releases/tag/v4.1.4.1)
+and [3.1.10.6](https://github.com/mzielinski/spring-cloud-contract-oa3/releases/tag/v3.1.10.5) [jitpack](https://jitpack.io/#mzielinski/spring-cloud-contract-oa3)
+was replaced with
+[Maven Central Repository](https://central.sonatype.com/artifact/io.github.mzielinski/spring-cloud-contract-oa3).
+Previous releases are available only on jitpack.
 
 ## Contributing
 
