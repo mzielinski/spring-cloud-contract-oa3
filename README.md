@@ -29,8 +29,15 @@ implementation. The rewrite also introduced new features and comprehensive tests
 
 1. **Define your OpenAPI Specification** with contracts embedded in the `x-contract` extensions. These extensions
    specify details about the API's expected behavior for contract testing.
-2. **Add the following Dependency** to your project together with Spring Cloud
-   Contract dependencies:
+
+```yaml
+
+
+```
+
+[Sample OpenAPI 3.0 Specification used in the tests](https://github.com/mzielinski/spring-cloud-contract-oa3/tree/master/src/test/resources/openapi)
+
+2. **Define Spring Cloud Contract Configuration** to your project
     - **Gradle**:
      ```groovy
      repositories {
@@ -40,33 +47,49 @@ implementation. The rewrite also introduced new features and comprehensive tests
      dependencies {
        testImplementation("com.github.mzielinski:spring-cloud-contract-oa3:$springCloudContractOa3Version")
      }
-      ``` 
+     
+     contracts {
+         // Path to the directory containing your OpenAPI specifications with x-contract extensions
+         contractsDslDir = new File("__path_to_dir_with_openapi_specifications__")
+         // (...) Standard Spring Cloud Configuration
+     }
+     ``` 
     - **Maven**:
      ```xml
-     <repositories>
-       <repository>
-         <id>jitpack.io</id>
-         <url>https://jitpack.io</url>
-       </repository>
-     </repositories>
+     <pluginRepositories>
+         <pluginRepository>
+             <id>jitpack.io</id>
+             <url>https://jitpack.io</url>
+         </pluginRepository>
+     </pluginRepositories>
    
-     <dependency>
-       <groupId>com.github.mzielinski</groupId>
-       <artifactId>spring-cloud-contract-oa3</artifactId>
-       <version>${springCloudContractOa3Version}</version>
-       <scope>test</scope>
-     </dependency>
+     <plugin>
+         <groupId>org.springframework.cloud</groupId>
+         <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+         <version>${spring-cloud-contract.version}</version>
+         <executions>
+             <execution>
+                 <goals>
+                     <goal>convert</goal>
+                     <goal>generateStubs</goal>
+                     <goal>generateTests</goal>
+                 </goals>
+             </execution>
+         </executions>
+         <configuration>
+             <packageWithBaseClasses>com.mzielinski.sccoa3.examples</packageWithBaseClasses>
+             <contractsDirectory>${project.basedir}/src/main/resources/openapi</contractsDirectory>
+            <testFramework>JUNIT5</testFramework>
+         </configuration>
+         <dependencies>
+             <dependency>
+                 <groupId>com.github.mzielinski</groupId>
+                 <artifactId>spring-cloud-contract-oa3</artifactId>
+                 <version>${spring-cloud-contract-oa3.version}</version>
+             </dependency>
+         </dependencies>
+     </plugin>
      ```
-3. **Define Spring Cloud Contract Configuration**  
-   Next, configure Spring Cloud Contract in the standard way. For example, using a Gradle build script:
-
-   ```groovy
-   contracts {
-     // Path to the directory containing your OpenAPI specifications with x-contract extensions
-     contractsDslDir = new File("__path_to_dir_with_openapi_specifications__")
-     // (...) Standard Spring Cloud Configuration
-   }
-   ```
 
 This extension allows you to centralize your contract and API definition processes, streamlining API development and
 testing with [**Spring Cloud Contract**](https://spring.io/projects/spring-cloud-contract).
