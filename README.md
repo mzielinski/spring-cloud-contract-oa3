@@ -144,30 +144,30 @@ contracts {
 </pluginRepositories>
 
 <plugin>
-<groupId>org.springframework.cloud</groupId>
-<artifactId>spring-cloud-contract-maven-plugin</artifactId>
-<version>${spring-cloud-contract.version}</version>
-<executions>
-    <execution>
-        <goals>
-            <goal>convert</goal>
-            <goal>generateStubs</goal>
-            <goal>generateTests</goal>
-        </goals>
-    </execution>
-</executions>
-<configuration>
-    <packageWithBaseClasses>com.mzielinski.sccoa3.examples</packageWithBaseClasses>
-    <contractsDirectory>${project.basedir}/src/main/resources/openapi</contractsDirectory>
-    <testFramework>JUNIT5</testFramework>
-</configuration>
-<dependencies>
-    <dependency>
-        <groupId>com.github.mzielinski</groupId>
-        <artifactId>spring-cloud-contract-oa3</artifactId>
-        <version>${spring-cloud-contract-oa3.version}</version>
-    </dependency>
-</dependencies>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+    <version>${spring-cloud-contract.version}</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>convert</goal>
+                <goal>generateStubs</goal>
+                <goal>generateTests</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <packageWithBaseClasses>com.mzielinski.sccoa3.examples</packageWithBaseClasses>
+        <contractsDirectory>${project.basedir}/src/main/resources/openapi</contractsDirectory>
+        <testFramework>JUNIT5</testFramework>
+    </configuration>
+    <dependencies>
+        <dependency>
+            <groupId>com.github.mzielinski</groupId>
+            <artifactId>spring-cloud-contract-oa3</artifactId>
+            <version>${spring-cloud-contract-oa3.version}</version>
+        </dependency>
+    </dependencies>
 </plugin>
 ```
 
