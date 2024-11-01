@@ -4,7 +4,7 @@
 
     <groupId>com.github.mzielinski</groupId>
     <artifactId>spring-cloud-contract-oa3</artifactId>
-    <version>3.1.10.5-SNAPSHOT</version>
+    <version>3.1.10.5</version>
     <packaging>jar</packaging>
 
     <name>spring-cloud-contract-oa3</name>
@@ -163,7 +163,7 @@
         <developerConnection>scm:git:git@github.com:mzielinski/spring-cloud-contract-oa3.git
         </developerConnection>
         <url>https://github.com/mzielinski/spring-cloud-contract-oa3</url>
-        <tag>v3.1.10.1</tag>
+        <tag>v3.1.10.5</tag>
     </scm>
 
     <issueManagement>
