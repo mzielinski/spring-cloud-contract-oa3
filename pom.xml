@@ -163,11 +163,6 @@
         </dependency>
     </dependencies>
 
-    <prerequisites>
-        <maven>[3.2.1,)</maven>
-    </prerequisites>
-
-
     <developers>
         <developer>
             <name>Maciej Zieliński</name>
@@ -176,9 +171,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/mzielinski/spring-cloud-contract-oa3.git</connection>
-        <developerConnection>scm:git:ssh://github.com:mzielinski/spring-cloud-contract-oa3.git</developerConnection>
-        <url>https://github.com/mzielinski/spring-cloud-contract-oa3/tree/master</url>
+        <connection>scm:git:git@github.com:mzielinski/spring-cloud-contract-oa3.git</connection>
+        <developerConnection>scm:git:git@github.com:mzielinski/spring-cloud-contract-oa3.git</developerConnection>
+        <url>https://github.com/mzielinski/spring-cloud-contract-oa3</url>
     </scm>
 
     <issueManagement>
@@ -193,7 +188,7 @@
 
     <profiles>
         <profile>
-            <id>asd</id>
+            <id>release</id>
             <activation>
                 <property>
                     <name>release</name>
