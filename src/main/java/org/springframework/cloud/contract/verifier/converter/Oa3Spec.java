@@ -1,99 +1,104 @@
 package org.springframework.cloud.contract.verifier.converter;
 
-import io.swagger.v3.oas.models.Operation;
-import io.swagger.v3.oas.models.PathItem;
-import io.swagger.v3.oas.models.parameters.Parameter;
-import io.swagger.v3.oas.models.parameters.RequestBody;
-import io.swagger.v3.oas.models.responses.ApiResponse;
+import com.fasterxml.jackson.databind.JsonNode;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-record Oa3Spec(String path, PathItem pathItem, Operation operation) {
+import static org.springframework.cloud.contract.verifier.converter.Utils.*;
 
-    static final String BODY = "body";
-    static final String BODY_FROM_FILE = "bodyFromFile";
-    static final String BODY_FROM_FILE_AS_BYTES = "bodyFromFileAsBytes";
-    static final String COMMAND = "command";
-    static final String CONTENT_TYPE = "contentType";
-    static final String CONTENT_TYPE_COMMAND = "contentTypeCommand";
-    static final String CONTENT_TYPE_HTTP_HEADER = "Content-Type";
-    static final String CONTRACT_ID = "contractId";
-    static final String CONTRACT_PATH = "contractPath";
-    static final String COOKIE = "cookie";
-    static final String COOKIES = "cookies";
-    static final String DESCRIPTION = "description";
-    static final String FILE_CONTENT = "fileContent";
-    static final String FILE_CONTENT_AS_BYTES = "fileContentAsBytes";
-    static final String FILE_CONTENT_COMMAND = "fileContentCommand";
-    static final String FILE_CONTENT_FROM_FILE_AS_BYTES = "fileContentFromFileAsBytes";
-    static final String FILE_NAME = "fileName";
-    static final String FILE_NAME_COMMAND = "fileNameCommand";
-    static final String HEADER = "header";
-    static final String HEADERS = "headers";
-    static final String IGNORED = "ignored";
-    static final String KEY = "key";
-    static final String LABEL = "label";
-    static final String MATCHERS = "matchers";
-    static final String MAX_OCCURRENCE = "maxOccurrence";
-    static final String MIN_OCCURRENCE = "minOccurrence";
-    static final String MULTIPART = "multipart";
-    static final String NAME = "name";
-    static final String NAMED = "named";
-    static final String PARAM_NAME = "paramName";
-    static final String PARAMS = "params";
-    static final String PATH = "path";
-    static final String PREDEFINED = "predefined";
-    static final String PRIORITY = "priority";
-    static final String QUERY = "query";
-    static final String QUERY_PARAMETERS = "queryParameters";
-    static final String REGEX = "regex";
-    static final String REGEX_TYPE = "regexType";
-    static final String REQUEST = "request";
-    static final String SERVICE_NAME = "serviceName";
-    static final String TYPE = "type";
-    static final String URL = "url";
-    static final String VALUE = "value";
-    static final String X_CONTRACTS = "x-contracts";
+public record Oa3Spec(String path, String httpMethod, JsonNode operationNode, JsonNode parametersNode) {
 
-    List<Parameter> operationParameters() {
-        return operation.getParameters() != null
-                ? operation.getParameters()
-                : List.of();
+    public static final String BODY = "body";
+    public static final String BODY_FROM_FILE = "bodyFromFile";
+    public static final String BODY_FROM_FILE_AS_BYTES = "bodyFromFileAsBytes";
+    public static final String COMMAND = "command";
+    public static final String CONTENT = "content";
+    public static final String CONTENT_TYPE = "contentType";
+    public static final String CONTENT_TYPE_COMMAND = "contentTypeCommand";
+    public static final String CONTENT_TYPE_HTTP_HEADER = "Content-Type";
+    public static final String CONTRACT_ID = "contractId";
+    public static final String CONTRACT_PATH = "contractPath";
+    public static final String COOKIE = "cookie";
+    public static final String COOKIES = "cookies";
+    public static final String DESCRIPTION = "description";
+    public static final String FILE_CONTENT = "fileContent";
+    public static final String FILE_CONTENT_AS_BYTES = "fileContentAsBytes";
+    public static final String FILE_CONTENT_COMMAND = "fileContentCommand";
+    public static final String FILE_CONTENT_FROM_FILE_AS_BYTES = "fileContentFromFileAsBytes";
+    public static final String FILE_NAME = "fileName";
+    public static final String FILE_NAME_COMMAND = "fileNameCommand";
+    public static final String HEADER = "header";
+    public static final String HEADERS = "headers";
+    public static final String IGNORED = "ignored";
+    public static final String IN = "in";
+    public static final String KEY = "key";
+    public static final String LABEL = "label";
+    public static final String MATCHERS = "matchers";
+    public static final String MAX_OCCURRENCE = "maxOccurrence";
+    public static final String MIN_OCCURRENCE = "minOccurrence";
+    public static final String MULTIPART = "multipart";
+    public static final String NAME = "name";
+    public static final String NAMED = "named";
+    public static final String PARAM_NAME = "paramName";
+    public static final String PARAMS = "params";
+    public static final String PARAMETERS = "parameters";
+    public static final String PATH = "path";
+    public static final String PATHS = "paths";
+    public static final String PREDEFINED = "predefined";
+    public static final String PRIORITY = "priority";
+    public static final String QUERY = "query";
+    public static final String QUERY_PARAMETERS = "queryParameters";
+    public static final String REGEX = "regex";
+    public static final String REGEX_TYPE = "regexType";
+    public static final String REQUEST = "request";
+    public static final String REQUEST_BODY = "requestBody";
+    public static final String RESPONSES = "responses";
+    public static final String SERVICE_NAME = "serviceName";
+    public static final String TYPE = "type";
+    public static final String URL = "url";
+    public static final String VALUE = "value";
+    public static final String X_CONTRACTS = "x-contracts";
+    public static final String[] OPENAPI_OPERATIONS = new String[]{"get", "put", "head", "post", "delete", "patch", "options", "trace"};
+
+    public String calculatePath(String contractId) {
+        return Optional.ofNullable(parametersNode())
+                .map(parameters -> toStream(parameters.iterator())
+                        .map(parameter -> findContract(parameter, contractId)
+                                .map(value -> Map.entry(
+                                        parameter.get(NAME).asText(),
+                                        value.get(VALUE).asText()))
+                                .orElse(null))
+                        .filter(Objects::nonNull)
+                        .reduce(path(),
+                                (currentPath, entry) -> currentPath.replace("{" + entry.getKey() + "}", entry.getValue()),
+                                (p1, p2) -> p1))
+                .orElseGet(this::path);
     }
 
-    RequestBody operationRequestBody() {
-        return operation.getRequestBody() != null
-                ? operation.getRequestBody()
-                : new RequestBody();
+    public static Optional<String> getContentType(JsonNode root) {
+        return Optional.ofNullable(root)
+                .map(node -> node.get(CONTENT))
+                .flatMap(node -> toStream(node.fieldNames()).findFirst());
     }
 
-    Map<String, ApiResponse> operationResponse() {
-        return operation.getResponses() != null
-                ? operation.getResponses()
-                : Map.of();
+    public static Stream<JsonNode> xContracts(JsonNode node, String nodeName) {
+        return findSubNodes(node, nodeName, X_CONTRACTS);
     }
 
-    Optional<String> requestContentType() {
-        return Optional.ofNullable(operation().getRequestBody())
-                .map(RequestBody::getContent)
-                .map(Map::keySet)
-                .flatMap(keys -> keys.stream().findFirst());
+    public static Optional<JsonNode> findContract(JsonNode node, String contractId) {
+        return Optional.ofNullable(node)
+                .map(n -> n.get(X_CONTRACTS))
+                .flatMap(contracts -> toStream(contracts.iterator())
+                        .filter(contract -> contractId.equalsIgnoreCase(toText(contract.get(CONTRACT_ID))))
+                        .findAny());
     }
 
-    String httpMethod() {
-        if (operation().equals(pathItem().getGet())) {
-            return "GET";
-        } else if (operation().equals(pathItem().getPut())) {
-            return "PUT";
-        } else if (operation().equals(pathItem().getPost())) {
-            return "POST";
-        } else if (operation().equals(pathItem().getDelete())) {
-            return "DELETE";
-        } else if (operation().equals(pathItem().getPatch())) {
-            return "PATCH";
-        }
-        return null;
+    public static Optional<JsonNode> findContract(JsonNode parentNode, String nodeName, String contractId) {
+        return xContracts(parentNode, nodeName)
+                .filter(contract -> contractId.equalsIgnoreCase(toText(contract.get(CONTRACT_ID))))
+                .findAny();
     }
 }

@@ -5,11 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
+import org.springframework.cloud.contract.verifier.converter.parsers.Oa3Parser;
+import org.springframework.cloud.contract.verifier.converter.parsers.YamlOa3Parser;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public class OpenApiContractConverter implements ContractConverter<Collection<PathItem>> {
 
@@ -17,13 +18,12 @@ public class OpenApiContractConverter implements ContractConverter<Collection<Pa
 
     private final TempYamlToContracts tempYamlToContracts = new TempYamlToContracts();
     private final Oa3ToScc oa3ToScc = new Oa3ToScc();
-    private final Oa3Parser oa3Parser = new Oa3Parser();
+    private final Oa3Parser oa3Parser = new YamlOa3Parser();
 
     @Override
     public boolean isAccepted(File file) {
         try {
-            return oa3ToScc.convert(oa3Parser.parseOpenAPI(file))
-                    .anyMatch(Objects::nonNull);
+            return oa3Parser.canParse(file);
         } catch (Exception e) {
             log.error("Error reading OpenAPI specification", e);
         }

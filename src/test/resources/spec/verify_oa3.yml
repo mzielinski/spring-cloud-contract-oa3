@@ -225,6 +225,8 @@ paths:
                 type: string
           x-contracts:
             - contractId: matchers
+              headers:
+                Content-Type: "application/json"
               body:
                 duck: 123
                 alpha: "abc"

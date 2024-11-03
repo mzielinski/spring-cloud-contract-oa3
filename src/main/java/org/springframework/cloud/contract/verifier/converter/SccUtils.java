@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-class SccUtils {
+public class SccUtils {
 
     private static final Logger log = LoggerFactory.getLogger(SccUtils.class);
 
@@ -15,15 +15,15 @@ class SccUtils {
         throw new AssertionError("Utility class");
     }
 
-    static YamlContract.MatchingType createMatchingType(String val) {
+    public static YamlContract.MatchingType createMatchingType(String val) {
         return tryToParse(val, YamlContract.MatchingType::valueOf);
     }
 
-    static YamlContract.PredefinedRegex createPredefinedRegex(String val) {
+    public static YamlContract.PredefinedRegex createPredefinedRegex(String val) {
         return tryToParse(val, YamlContract.PredefinedRegex::valueOf);
     }
 
-    static YamlContract.RegexType createRegexType(String val) {
+    public static YamlContract.RegexType createRegexType(String val) {
         return tryToParse(val, YamlContract.RegexType::valueOf);
     }
 

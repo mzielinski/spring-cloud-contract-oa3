@@ -1,15 +1,11 @@
 package org.springframework.cloud.contract.verifier.converter;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.cloud.contract.verifier.converter.YamlContract.BodyTestMatcher;
 import org.springframework.cloud.contract.verifier.converter.YamlContract.TestCookieMatcher;
 import org.springframework.cloud.contract.verifier.converter.YamlContract.TestHeaderMatcher;
 import org.springframework.cloud.contract.verifier.converter.YamlContract.TestMatcherType;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.*;
 import static org.springframework.cloud.contract.verifier.converter.SccUtils.createPredefinedRegex;
 import static org.springframework.cloud.contract.verifier.converter.SccUtils.createRegexType;
@@ -18,94 +14,81 @@ import static org.springframework.cloud.contract.verifier.converter.Utils.*;
 class Oa3ToSccResponse {
 
     private final Oa3Spec spec;
-    private final Object contractId;
+    private final String contractId;
 
-    Oa3ToSccResponse(Oa3Spec spec, Object contractId) {
+    Oa3ToSccResponse(Oa3Spec spec, String contractId) {
         this.spec = spec;
         this.contractId = contractId;
     }
 
-    YamlContract.Response convert() {
+    YamlContract.Response convertToResponse() {
+        JsonNode responseNode = spec.operationNode().get(RESPONSES);
+        return toStream(responseNode.fields())
+                .map(entry -> findContract(responseNode, entry.getKey(), contractId)
+                        .map(contract -> convertToResponse(entry.getKey(), entry.getValue(), contract))
+                        .orElseGet(YamlContract.Response::new))
+                .findAny()
+                .orElseGet(YamlContract.Response::new);
+    }
+
+    private YamlContract.Response convertToResponse(String responseCode, JsonNode spec, JsonNode contract) {
         YamlContract.Response yamlResponse = new YamlContract.Response();
-        spec.operationResponse().forEach((key, value) -> {
-            Map<String, Object> contracts = xContracts(value.getExtensions(), contractId);
-            if (!contracts.isEmpty()) {
-                // response basic
-                yamlResponse.status = Integer.parseInt(key.replaceAll("[^a-zA-Z0-9 ]+", ""));
-                yamlResponse.body = get(contracts, "body");
-                yamlResponse.bodyFromFile = get(contracts, "bodyFromFile");
-                yamlResponse.bodyFromFileAsBytes = get(contracts, "bodyFromFileAsBytes");
 
-                // response headers
-                Optional.ofNullable(value.getContent())
-                        .map(Map::keySet)
-                        .flatMap(keys -> keys.stream().findFirst())
-                        .ifPresent(contentType -> yamlResponse.headers.put("Content-Type", contentType));
-                yamlResponse.headers.putAll(getOrDefault(contracts, "headers", EMPTY_MAP));
+        // response basic
+        yamlResponse.status = Integer.parseInt(responseCode.replaceAll("[^a-zA-Z0-9 ]+", ""));
+        yamlResponse.body = contract.get(BODY); // Convert to expected object
+        yamlResponse.bodyFromFile = toText(contract.get(BODY_FROM_FILE_AS_BYTES));
+        yamlResponse.bodyFromFileAsBytes = toText(contract.get(BODY_FROM_FILE_AS_BYTES));
 
-                // matchers
-                convertMatchers(getOrDefault(contracts, "matchers", EMPTY_MAP), yamlResponse);
-            }
-        });
+        // response headers
+        getContentType(spec).ifPresent(contentType -> yamlResponse.headers.put(CONTENT_TYPE_HTTP_HEADER, contentType));
+        yamlResponse.headers.putAll(toMap(contract.get(HEADERS)));
+
+        // response body matchers
+        yamlResponse.matchers.body.addAll(findSubNodes(contract, MATCHERS, BODY)
+                .map(this::buildBodyTestMatcher).toList());
+
+        // response header matchers
+        yamlResponse.matchers.headers.addAll(findSubNodes(contract, MATCHERS, HEADERS)
+                .map(this::buildTestHeaderMatchers).toList());
+
+        // response cookies matchers
+        yamlResponse.matchers.cookies.addAll(findSubNodes(contract, MATCHERS, COOKIES)
+                .map(this::buildTestCookieMatchers).toList());
+
         return yamlResponse;
     }
 
-    private void convertMatchers(Map<String, Object> responseMatchers, YamlContract.Response response) {
-        // response body matchers
-        List<BodyTestMatcher> responseBodyTestMatchers =
-                getOrDefault(responseMatchers, BODY, EMPTY_LIST).stream()
-                        .map(this::buildBodyTestMatcher).toList();
-        response.matchers.body.addAll(responseBodyTestMatchers);
-
-        // response header matchers
-        List<TestHeaderMatcher> responseHeaderTestMatchers =
-                getOrDefault(responseMatchers, HEADERS, EMPTY_LIST).stream()
-                        .map(this::buildTestHeaderMatchers).toList();
-        response.matchers.headers.addAll(responseHeaderTestMatchers);
-
-        // response cookies matchers
-        List<TestCookieMatcher> responseCookieTestMatchers =
-                getOrDefault(responseMatchers, COOKIES, EMPTY_LIST).stream()
-                        .map(this::buildTestCookieMatchers).toList();
-        response.matchers.cookies.addAll(responseCookieTestMatchers);
-    }
-
-    private Map<String, Object> xContracts(Map<String, Object> spec, Object contractId) {
-        return getOrDefault(spec, X_CONTRACTS, EMPTY_LIST).stream()
-                .filter(contract -> contractId.equals(get(contract, CONTRACT_ID)))
-                .findFirst().orElse(Map.of());
-    }
-
-    private TestHeaderMatcher buildTestHeaderMatchers(Map<String, Object> matcher) {
+    private TestHeaderMatcher buildTestHeaderMatchers(JsonNode node) {
         TestHeaderMatcher headersMatcher = new TestHeaderMatcher();
-        headersMatcher.key = get(matcher, KEY);
-        headersMatcher.regex = get(matcher, REGEX);
-        headersMatcher.predefined = createPredefinedRegex(get(matcher, PREDEFINED));
-        headersMatcher.command = get(matcher, COMMAND);
-        headersMatcher.regexType = createRegexType(get(matcher, REGEX_TYPE));
+        headersMatcher.key = toText(node.get(KEY));
+        headersMatcher.regex = toText(node.get(REGEX));
+        headersMatcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
+        headersMatcher.command = toText(node.get(COMMAND));
+        headersMatcher.regexType = createRegexType(toText(node.get(REGEX_TYPE)));
         return headersMatcher;
     }
 
-    private TestCookieMatcher buildTestCookieMatchers(Map<String, Object> matcher) {
+    private TestCookieMatcher buildTestCookieMatchers(JsonNode node) {
         TestCookieMatcher testCookieMatcher = new TestCookieMatcher();
-        testCookieMatcher.key = get(matcher, KEY);
-        testCookieMatcher.regex = get(matcher, REGEX);
-        testCookieMatcher.predefined = createPredefinedRegex(get(matcher, PREDEFINED));
-        testCookieMatcher.command = get(matcher, COMMAND);
-        testCookieMatcher.regexType = createRegexType(get(matcher, REGEX_TYPE));
+        testCookieMatcher.key = toText(node.get(KEY));
+        testCookieMatcher.regex = toText(node.get(REGEX));
+        testCookieMatcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
+        testCookieMatcher.command = toText(node.get(COMMAND));
+        testCookieMatcher.regexType = createRegexType(toText(node.get(REGEX_TYPE)));
         return testCookieMatcher;
     }
 
-    private BodyTestMatcher buildBodyTestMatcher(Map<String, Object> bodyMatchers) {
+    private BodyTestMatcher buildBodyTestMatcher(JsonNode node) {
         BodyTestMatcher bodyStubMatcher = new BodyTestMatcher();
-        bodyStubMatcher.path = get(bodyMatchers, PATH);
-        bodyStubMatcher.value = get(bodyMatchers, VALUE);
-        bodyStubMatcher.predefined = createPredefinedRegex(get(bodyMatchers, PREDEFINED));
-        bodyStubMatcher.minOccurrence = get(bodyMatchers, MIN_OCCURRENCE);
-        bodyStubMatcher.maxOccurrence = get(bodyMatchers, MAX_OCCURRENCE);
-        bodyStubMatcher.regexType = createRegexType(get(bodyMatchers, REGEX_TYPE));
-        if (isNotEmpty(get(bodyMatchers, TYPE))) {
-            bodyStubMatcher.type = TestMatcherType.valueOf(get(bodyMatchers, TYPE));
+        bodyStubMatcher.path = toText(node.get(PATH));
+        bodyStubMatcher.value = toText(node.get(VALUE));
+        bodyStubMatcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
+        bodyStubMatcher.minOccurrence = toInteger(node.get(MIN_OCCURRENCE));
+        bodyStubMatcher.maxOccurrence = toInteger(node.get(MAX_OCCURRENCE));
+        bodyStubMatcher.regexType = createRegexType(toText(node.get(REGEX_TYPE)));
+        if (node.get(TYPE) != null) {
+            bodyStubMatcher.type = TestMatcherType.valueOf(toText(node.get(TYPE)));
         }
         return bodyStubMatcher;
     }
