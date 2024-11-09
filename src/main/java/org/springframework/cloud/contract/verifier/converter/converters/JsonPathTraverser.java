@@ -5,6 +5,7 @@ import com.jayway.jsonpath.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,7 +23,7 @@ public class JsonPathTraverser {
     }
 
     public Map<String, JsonNode> queryParameters(JsonNode parentNode, String contractId, String parameterName) {
-        return getJsonNode(parentNode, "$.parameters[?]", PARAM_IN_FILTER.apply(QUERY))
+        return jsonNodeIterator(parentNode, "$.parameters[?]", PARAM_IN_FILTER.apply(QUERY))
                 .filter(parameter -> getContractsForParameter(parameter, contractId, parameterName).findAny().isPresent())
                 .collect(Collectors.toMap(
                         parameter -> parameter.get(NAME).asText(),
@@ -31,7 +32,7 @@ public class JsonPathTraverser {
     }
 
     public Map<String, JsonNode> requestBodyQueryParameters(JsonNode parentNode, String contractId) {
-        return getJsonNode(parentNode,
+        return jsonNodeIterator(parentNode,
                 "$.requestBody.x-contracts[?].queryParameters",
                 CONTRACT_ID_FILTER.apply(contractId)).flatMap(it -> toStream(it.iterator()))
                 .collect(Collectors.toMap(
@@ -39,8 +40,14 @@ public class JsonPathTraverser {
                         entry -> entry.get(VALUE)));
     }
 
+    public Optional<String> requestBodyContentType(JsonNode parentNode) {
+        return Optional.ofNullable(jsonNode(parentNode, "$.requestBody"))
+                .map(requestBody -> requestBody.get("content"))
+                .flatMap(a -> toStream(a.fieldNames()).findFirst());
+    }
+
     public List<JsonNode> requestBodyQueryParameterMatchers(JsonNode parentNode, String contractId) {
-        return getJsonNode(parentNode,
+        return jsonNodeIterator(parentNode,
                 "$.requestBody.x-contracts[?].matchers.queryParameters",
                 CONTRACT_ID_FILTER.apply(contractId)).flatMap(it -> toStream(it.iterator()))
                 .toList();
@@ -49,14 +56,18 @@ public class JsonPathTraverser {
     private Stream<JsonNode> getContractsForParameter(JsonNode parameterNode, String contractId, String parameterName) {
         JsonNode parentNode = parameterNode.get(X_CONTRACTS);
         return parentNode != null
-                ? getJsonNode(parentNode, "$.[?]." + parameterName, CONTRACT_ID_FILTER.apply(contractId))
+                ? jsonNodeIterator(parentNode, "$.[?]." + parameterName, CONTRACT_ID_FILTER.apply(contractId))
                 : Stream.empty();
     }
 
-    private Stream<JsonNode> getJsonNode(JsonNode parentNode, String jsonPath, Predicate... predicates) {
-        JsonNode node = JsonPath.using(configuration)
+    private Stream<JsonNode> jsonNodeIterator(JsonNode parentNode, String jsonPath, Predicate... predicates) {
+        JsonNode node = jsonNode(parentNode, jsonPath, predicates);
+        return toStream(node.iterator());
+    }
+
+    private JsonNode jsonNode(JsonNode parentNode, String jsonPath, Predicate... predicates) {
+        return JsonPath.using(configuration)
                 .parse(parentNode)
                 .read(jsonPath, predicates);
-        return toStream(node.iterator());
     }
 }

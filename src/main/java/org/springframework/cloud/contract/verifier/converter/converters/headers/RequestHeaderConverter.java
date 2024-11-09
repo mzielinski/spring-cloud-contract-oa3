@@ -5,6 +5,7 @@ import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.converter.converters.JsonPathTraverser;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -27,10 +28,15 @@ public class RequestHeaderConverter {
         this.contractId = contractId;
     }
 
-    public void convert(YamlContract.Request yamlRequest) {
+    public Map<String, Object> convert() {
+        Map<String, Object> headers = new LinkedHashMap<>();
+        traverser.requestBodyContentType(spec.operationNode())
+                .ifPresent(contentType -> headers.put(CONTENT_TYPE_HTTP_HEADER, contentType));
+        System.out.println(headers);
+
         // request headers
 //        getContentType(spec.operationNode().get(REQUEST_BODY))
-//                .ifPresent(contentType -> yamlRequest.headers.put(CONTENT_TYPE_HTTP_HEADER, contentType));
+//                .ifPresent(contentType -> );
 //        yamlRequest.headers.putAll(toMap(contract.get(HEADERS)));
 //
 //        yamlRequest.headers.putAll(getOrDefault(requestBody, HEADERS, EMPTY_MAP));
@@ -50,6 +56,8 @@ public class RequestHeaderConverter {
 //                                            ));
 //                                })
 //                        ));
+
+        return headers;
     }
 
     private List<YamlContract.HeadersMatcher> buildHeaderMatchers(Stream<JsonNode> contracts, String name) {

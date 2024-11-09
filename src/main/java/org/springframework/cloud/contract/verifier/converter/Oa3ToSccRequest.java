@@ -38,7 +38,7 @@ class Oa3ToSccRequest {
         yamlRequest.matchers.queryParameters.addAll(new RequestQueryParameterMatcherConverter(spec, contractId).convert());
 
         // httpMethod headers
-        new RequestHeaderConverter(spec, contractId).convert(yamlRequest);
+        yamlRequest.headers.putAll(new RequestHeaderConverter(spec, contractId).convert());
 
 //
 //        // httpMethod cookies
