@@ -4,9 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -35,7 +32,7 @@ public class Utils {
                 .orElseGet(Stream::empty);
     }
 
-    public static Optional<JsonNode> getOrElse(JsonNode node, String nodeName) {
+    public static Optional<JsonNode> find(JsonNode node, String nodeName) {
         return Optional.ofNullable(node)
                 .filter(contract -> contract.get(nodeName) != null)
                 .map(contract -> contract.get(nodeName));

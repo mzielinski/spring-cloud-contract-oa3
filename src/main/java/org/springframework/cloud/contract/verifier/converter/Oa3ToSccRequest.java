@@ -1,11 +1,11 @@
 package org.springframework.cloud.contract.verifier.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.cloud.contract.verifier.converter.converters.RequestQueryParameterConverter;
+import org.springframework.cloud.contract.verifier.converter.converters.headers.RequestHeaderConverter;
+import org.springframework.cloud.contract.verifier.converter.converters.queryParameters.RequestQueryParameterConverter;
+import org.springframework.cloud.contract.verifier.converter.converters.queryParameters.RequestQueryParameterMatcherConverter;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.*;
 import static org.springframework.cloud.contract.verifier.converter.SccUtils.*;
@@ -28,30 +28,18 @@ class Oa3ToSccRequest {
         YamlContract.Request yamlRequest = new YamlContract.Request();
 
         // basic parameters
-        yamlRequest.urlPath = getOrElse(contract, CONTRACT_PATH)
+        yamlRequest.urlPath = find(contract, CONTRACT_PATH)
                 .map(Utils::toText)
                 .orElseGet(() -> spec.calculatePath(contractId));
         yamlRequest.method = spec.httpMethod().toUpperCase();
 
-        // request headers
-        getContentType(spec.operationNode().get(REQUEST_BODY))
-                .ifPresent(contentType -> yamlRequest.headers.put(CONTENT_TYPE_HTTP_HEADER, contentType));
-        yamlRequest.headers.putAll(toMap(contract.get(HEADERS)));
-
         // query parameters
-        new RequestQueryParameterConverter(spec, contractId).convert(yamlRequest);
+        yamlRequest.queryParameters.putAll(new RequestQueryParameterConverter(spec, contractId).convert());
+        yamlRequest.matchers.queryParameters.addAll(new RequestQueryParameterMatcherConverter(spec, contractId).convert());
 
-//        // httpMethod headers
-//        spec.operationParameters().stream()
-//                .filter(parameter -> !xContracts(parameter.getExtensions(), contractId).isEmpty())
-//                .filter(parameter -> Objects.equals(HEADER, parameter.getIn()))
-//                .forEach(parameter -> {
-//                    Map<String, Object> contractParam = xContracts(parameter.getExtensions(), contractId);
-//                    yamlRequest.headers.put(parameter.getName(), get(contractParam, VALUE));
-//                    List<YamlContract.HeadersMatcher> requestHeaderMatchers = buildHeaderMatchers(
-//                            xContracts(parameter.getExtensions(), contractId), parameter.getName());
-//                    yamlRequest.matchers.headers.addAll(requestHeaderMatchers);
-//                });
+        // httpMethod headers
+        new RequestHeaderConverter(spec, contractId).convert(yamlRequest);
+
 //
 //        // httpMethod cookies
 //        spec.operationParameters().stream()
@@ -65,7 +53,6 @@ class Oa3ToSccRequest {
 //
 //        // request body
 //        Map<String, Object> requestBody = xContracts(spec.operationRequestBody().getExtensions(), contractId);
-//        yamlRequest.headers.putAll(getOrDefault(requestBody, HEADERS, EMPTY_MAP));
 //        yamlRequest.cookies.putAll(getOrDefault(requestBody, COOKIES, EMPTY_MAP));
 
 //        yamlRequest.body = get(requestBody, BODY);
@@ -100,20 +87,13 @@ class Oa3ToSccRequest {
         return yamlRequest;
     }
 
+
+
     private void convertMatchers(JsonNode requestNode, YamlContract.Request request) {
         // request body url matchers
-//        request.matchers.url = buildKeyValueMatcher(getOrDefault(matchers, URL, EMPTY_MAP));
-
-        // request body headers matchers
-//        request.matchers.headers.addAll(getOrDefault(matchers, HEADERS, EMPTY_LIST).stream()
-//                .map(this::buildKeyValueMatcher).toList());
 
 //        request.matchers.url = buildKeyValueMatcher(getOrDefault(matchers, URL, EMPTY_MAP));
 
-//        // request body headers matchers
-//        request.matchers.headers.addAll(getOrDefault(matchers, HEADERS, EMPTY_LIST).stream()
-//                .map(this::buildKeyValueMatcher).toList());
-//
 //        // request body cookies matchers
 //        request.matchers.cookies.addAll(getOrDefault(matchers, COOKIES, EMPTY_LIST).stream()
 //                .map(this::buildKeyValueMatcher).toList());
@@ -145,18 +125,7 @@ class Oa3ToSccRequest {
 //        }
     }
 
-    private List<YamlContract.HeadersMatcher> buildHeaderMatchers(List<JsonNode> contracts, String name) {
-        return contracts.stream()
-                .map(node -> {
-                    YamlContract.HeadersMatcher headersMatcher = new YamlContract.HeadersMatcher();
-                    headersMatcher.key = name;
-                    headersMatcher.regex = toText(node.get(REGEX));
-                    headersMatcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
-                    headersMatcher.command = toText(node.get(COMMAND));
-                    headersMatcher.regexType = createRegexType(toText(node.get(REGEX_TYPE)));
-                    return headersMatcher;
-                }).toList();
-    }
+
 
     private YamlContract.BodyStubMatcher buildBodyStubMatcher(JsonNode node) {
         YamlContract.BodyStubMatcher bodyStubMatcher = new YamlContract.BodyStubMatcher();

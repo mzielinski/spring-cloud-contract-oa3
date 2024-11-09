@@ -13,6 +13,7 @@ paths:
           name: Should verify basic fileds and matchers
           headers:
             headerFoo: 'should be overridden by definition in parameters'
+            headerFoo2: 'should be overridden by definition in parameters'
       parameters:
         - name: limit
           in: query
@@ -110,6 +111,10 @@ paths:
               value: "barTest"
               matchers:
                 - regex: "bar.*"
+                  predefined: only_alpha_unicode
+                  command: "thing($it)"
+                  regexType: "as_string"
+                - regex: "barTest"
                   predefined: only_alpha_unicode
                   command: "thing($it)"
                   regexType: "as_string"
