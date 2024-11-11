@@ -23,7 +23,7 @@ public class RequestQueryParameterConverter {
     public Map<String, Object> convert() {
         Map<String, Object> queryParameters = new LinkedHashMap<>();
         queryParameters.putAll(traverser.requestBodyQueryParameters(spec.operationNode(), contractId));
-        queryParameters.putAll(traverser.queryParameters(spec.operationNode(), contractId, VALUE));
+        queryParameters.putAll(traverser.parameterQueries(spec.operationNode(), contractId, VALUE));
         return queryParameters;
     }
 }

@@ -1,4 +1,4 @@
-name: Should verify basic fileds and matchers
+name: Should verify basic fields and matchers
 request:
   method: POST
   urlPath: /check-matchers/1

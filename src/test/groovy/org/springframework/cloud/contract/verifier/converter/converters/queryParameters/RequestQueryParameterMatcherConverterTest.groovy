@@ -80,7 +80,7 @@ class RequestQueryParameterMatcherConverterTest extends Specification {
     }
 
     @Unroll
-    def 'should return empty list when query parameters cannot be found for given contract'() {
+    def 'should return empty list when query parameters matchers cannot be found for given contract'() {
         given:
         def converter = new RequestQueryParameterMatcherConverter(
                 new Oa3Spec(

@@ -29,19 +29,19 @@ public class RequestQueryParameterMatcherConverter {
         traverser.requestBodyQueryParameterMatchers(spec.operationNode(), contractId)
                 .forEach(matcher -> queryParameterMatchers
                         .addAll(toQueryParameterMatcher(matcher, matcher.get(KEY).asText())));
-        traverser.queryParameters(spec.operationNode(), contractId, MATCHERS)
+        traverser.parameterQueries(spec.operationNode(), contractId, MATCHERS)
                 .forEach((parameterName, matcher) -> queryParameterMatchers
                         .addAll(toQueryParameterMatcher(matcher, parameterName)));
         return queryParameterMatchers;
     }
 
-    private static List<YamlContract.QueryParameterMatcher> toQueryParameterMatcher(JsonNode matcher, String parameterName) {
+    private List<YamlContract.QueryParameterMatcher> toQueryParameterMatcher(JsonNode matcher, String parameterName) {
         return matcher.isArray()
                 ? toStream(matcher.iterator()).map(subMatcher -> mapQueryParameterMatcher(parameterName, subMatcher)).toList()
                 : List.of(mapQueryParameterMatcher(parameterName, matcher));
     }
 
-    private static YamlContract.QueryParameterMatcher mapQueryParameterMatcher(String parameterName, JsonNode matcher) {
+    private YamlContract.QueryParameterMatcher mapQueryParameterMatcher(String parameterName, JsonNode matcher) {
         YamlContract.QueryParameterMatcher queryParameterMatcher = new YamlContract.QueryParameterMatcher();
         queryParameterMatcher.key = parameterName;
         queryParameterMatcher.value = matcher.get(VALUE);

@@ -4,7 +4,7 @@
   "x-contracts": [
     {
       "contractId": "contract1",
-      "name": "Should verify basic fileds and matchers",
+      "name": "Should verify basic fields and matchers",
       "headers": {
         "headerFoo": "should be overridden by definition in parameters",
         "headerFoo2": "should be overridden by definition in parameters"
@@ -211,6 +211,12 @@
     "x-contracts": [
       {
         "contractId": "contract1",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/json;charset=UTF-8"
+          }
+        ],
         "queryParameters": [
           {
             "key": "limit",

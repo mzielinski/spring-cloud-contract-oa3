@@ -2,7 +2,6 @@ package org.springframework.cloud.contract.verifier.converter.converters.headers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec
-import org.springframework.cloud.contract.verifier.converter.converters.queryParameters.RequestQueryParameterConverter
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -33,9 +32,10 @@ class RequestHeaderConverterTest extends Specification {
                 }
 
         then:
-        result.size() == 1
+        result.size() == 2
+        result['Content-Type'] == '"application/json;charset=UTF-8"'
+        result['headerFoo'] == '"barTest"'
     }
-
 
     @Unroll
     def 'should return empty list when headers cannot be found for given contract'() {

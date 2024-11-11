@@ -2,6 +2,7 @@ package org.springframework.cloud.contract.verifier.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.cloud.contract.verifier.converter.converters.headers.RequestHeaderConverter;
+import org.springframework.cloud.contract.verifier.converter.converters.headers.RequestHeaderMatcherConverter;
 import org.springframework.cloud.contract.verifier.converter.converters.queryParameters.RequestQueryParameterConverter;
 import org.springframework.cloud.contract.verifier.converter.converters.queryParameters.RequestQueryParameterMatcherConverter;
 
@@ -39,6 +40,7 @@ class Oa3ToSccRequest {
 
         // httpMethod headers
         yamlRequest.headers.putAll(new RequestHeaderConverter(spec, contractId).convert());
+        yamlRequest.matchers.headers.addAll(new RequestHeaderMatcherConverter(spec, contractId).convert());
 
 //
 //        // httpMethod cookies

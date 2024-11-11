@@ -5,7 +5,7 @@ import spock.util.environment.RestoreSystemProperties
 
 class ServiceNameTest extends Specification {
 
-    static final URL PETSTORE_URL = OpenApiContactConverterTest.getResource('/openapi/verify_swagger_petstore.yml')
+    static final URL PETSTORE_URL = OpenApiContactConverterTest.getResource('/spec/verify_swagger_petstore.yml')
     static final File PETSTORE_FILE = new File(PETSTORE_URL.toURI())
 
     ServiceNameVerifier serviceVerifier = new ServiceNameVerifier()
