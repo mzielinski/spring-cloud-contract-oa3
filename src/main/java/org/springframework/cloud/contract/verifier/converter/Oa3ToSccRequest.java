@@ -1,15 +1,18 @@
 package org.springframework.cloud.contract.verifier.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.cloud.contract.verifier.converter.converters.headers.RequestHeaderConverter;
-import org.springframework.cloud.contract.verifier.converter.converters.headers.RequestHeaderMatcherConverter;
-import org.springframework.cloud.contract.verifier.converter.converters.queryParameters.RequestQueryParameterConverter;
-import org.springframework.cloud.contract.verifier.converter.converters.queryParameters.RequestQueryParameterMatcherConverter;
+import org.springframework.cloud.contract.verifier.converter.converters.request.matchers.RequestCookieMatcherConverter;
+import org.springframework.cloud.contract.verifier.converter.converters.request.matchers.RequestHeaderMatcherConverter;
+import org.springframework.cloud.contract.verifier.converter.converters.request.matchers.RequestQueryParameterMatcherConverter;
+import org.springframework.cloud.contract.verifier.converter.converters.request.parameters.RequestCookieConverter;
+import org.springframework.cloud.contract.verifier.converter.converters.request.parameters.RequestHeaderConverter;
+import org.springframework.cloud.contract.verifier.converter.converters.request.parameters.RequestQueryParameterConverter;
 
 import java.util.Map;
 
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.*;
-import static org.springframework.cloud.contract.verifier.converter.SccUtils.*;
+import static org.springframework.cloud.contract.verifier.converter.SccUtils.createPredefinedRegex;
+import static org.springframework.cloud.contract.verifier.converter.SccUtils.createRegexType;
 import static org.springframework.cloud.contract.verifier.converter.Utils.*;
 
 class Oa3ToSccRequest {
@@ -38,9 +41,13 @@ class Oa3ToSccRequest {
         yamlRequest.queryParameters.putAll(new RequestQueryParameterConverter(spec, contractId).convert());
         yamlRequest.matchers.queryParameters.addAll(new RequestQueryParameterMatcherConverter(spec, contractId).convert());
 
-        // httpMethod headers
+        // headers
         yamlRequest.headers.putAll(new RequestHeaderConverter(spec, contractId).convert());
         yamlRequest.matchers.headers.addAll(new RequestHeaderMatcherConverter(spec, contractId).convert());
+
+        // cookies
+        yamlRequest.cookies.putAll(new RequestCookieConverter(spec, contractId).convert());
+        yamlRequest.matchers.cookies.addAll(new RequestCookieMatcherConverter(spec, contractId).convert());
 
 //
 //        // httpMethod cookies
@@ -152,15 +159,5 @@ class Oa3ToSccRequest {
         valueMatcher.regex = getOrDefault(map, REGEX, null);
         valueMatcher.predefined = createPredefinedRegex(get(map, PREDEFINED));
         return valueMatcher;
-    }
-
-    private YamlContract.KeyValueMatcher buildKeyValueMatcher(JsonNode node) {
-        YamlContract.KeyValueMatcher keyValueMatcher = new YamlContract.KeyValueMatcher();
-        keyValueMatcher.key = toText(node.get(KEY));
-        keyValueMatcher.regex = toText(node.get(REGEX));
-        keyValueMatcher.command = toText(node.get(COMMAND));
-        keyValueMatcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
-        keyValueMatcher.regexType = createRegexType(toText(node.get(REGEX_TYPE)));
-        return keyValueMatcher;
     }
 }

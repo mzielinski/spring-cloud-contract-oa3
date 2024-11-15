@@ -1,9 +1,9 @@
-package org.springframework.cloud.contract.verifier.converter.converters.headers
+package org.springframework.cloud.contract.verifier.converter.converters.request.matchers
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.IntNode
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec
 import org.springframework.cloud.contract.verifier.converter.YamlContract
+import org.springframework.cloud.contract.verifier.converter.converters.request.matchers.RequestHeaderMatcherConverter
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -31,22 +31,22 @@ class RequestHeaderMatchersConverterTest extends Specification {
         )
 
         when:
-        List<YamlContract.HeadersMatcher> result = converter.convert()
+        List<YamlContract.KeyValueMatcher> result = converter.convert()
 
         then:
         result.size() == 3
-        result.contains(new YamlContract.HeadersMatcher(
+        result.contains(new YamlContract.KeyValueMatcher(
                 key: 'Content-Type',
                 regex: 'application/json.*'
         ))
-        result.contains(new YamlContract.HeadersMatcher(
+        result.contains(new YamlContract.KeyValueMatcher(
                 key: 'headerFoo',
                 regex: 'bar.*',
                 predefined: only_alpha_unicode,
                 command: 'thing($it)',
                 regexType: as_string
         ))
-        result.contains(new YamlContract.HeadersMatcher(
+        result.contains(new YamlContract.KeyValueMatcher(
                 key: 'headerFoo',
                 regex: 'barTest',
                 predefined: only_alpha_unicode,

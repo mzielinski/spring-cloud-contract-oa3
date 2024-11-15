@@ -1,7 +1,9 @@
 package org.springframework.cloud.contract.verifier.converter.converters;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.jayway.jsonpath.*;
+import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.Predicate;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,15 +25,7 @@ public class JsonPathTraverser {
         this.configuration = configuration;
     }
 
-    public Map<String, JsonNode> parameterQueries(JsonNode parentNode, String contractId, String fieldName) {
-        return parametersItems(parentNode, contractId, fieldName, QUERY);
-    }
-
-    public Map<String, JsonNode> parameterHeaders(JsonNode parentNode, String contractId, String fieldName) {
-        return parametersItems(parentNode, contractId, fieldName, HEADER);
-    }
-
-    private Map<String, JsonNode> parametersItems(JsonNode parentNode, String contractId, String fieldName, String parameterName) {
+    public Map<String, JsonNode> requestParameterContracts(JsonNode parentNode, String contractId, String fieldName, String parameterName) {
         return jsonNodeIterator(parentNode, "$.parameters[?]", PARAM_IN_FILTER.apply(parameterName))
                 .filter(jsonNode -> getContractsForField(jsonNode, contractId, fieldName).findAny().isPresent())
                 .collect(Collectors.toMap(
@@ -40,15 +34,7 @@ public class JsonPathTraverser {
                 ));
     }
 
-    public Map<String, JsonNode> requestBodyQueryParameters(JsonNode parentNode, String contractId) {
-        return requestBodyItems(parentNode, contractId, QUERY_PARAMETERS);
-    }
-
-    public Map<String, JsonNode> requestBodyHeaders(JsonNode parentNode, String contractId) {
-        return requestBodyItems(parentNode, contractId, HEADERS);
-    }
-
-    private Map<String, JsonNode> requestBodyItems(JsonNode parentNode, String contractId, String fieldName) {
+    public Map<String, JsonNode> requestBodyContracts(JsonNode parentNode, String contractId, String fieldName) {
         Map<String, JsonNode> result = new LinkedHashMap<>();
         List<JsonNode> items = jsonNodeIterator(parentNode,
                 "$.requestBody.x-contracts[?]." + fieldName,
@@ -73,15 +59,7 @@ public class JsonPathTraverser {
                 .flatMap(a -> toStream(a.fieldNames()).findFirst());
     }
 
-    public List<JsonNode> requestBodyHeaderMatchers(JsonNode parentNode, String contractId) {
-        return requestBodyItemMatchers(parentNode, contractId, HEADERS);
-    }
-
-    public List<JsonNode> requestBodyQueryParameterMatchers(JsonNode parentNode, String contractId) {
-        return requestBodyItemMatchers(parentNode, contractId, QUERY_PARAMETERS);
-    }
-
-    private List<JsonNode> requestBodyItemMatchers(JsonNode parentNode, String contractId, String fieldName) {
+    public List<JsonNode> requestBodyContractMatchers(JsonNode parentNode, String contractId, String fieldName) {
         return jsonNodeIterator(parentNode,
                 "$.requestBody.x-contracts[?].matchers." + fieldName,
                 CONTRACT_ID_FILTER.apply(contractId)).flatMap(it -> toStream(it.iterator()))

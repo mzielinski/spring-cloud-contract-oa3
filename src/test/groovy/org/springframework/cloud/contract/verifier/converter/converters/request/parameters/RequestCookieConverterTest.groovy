@@ -1,4 +1,4 @@
-package org.springframework.cloud.contract.verifier.converter.converters.queryParameters
+package org.springframework.cloud.contract.verifier.converter.converters.request.parameters
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec
@@ -6,7 +6,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class RequestQueryParameterConverterTest extends Specification {
+class RequestCookieConverterTest extends Specification {
 
     private static final String CONTRACT_ID = 'contract1'
     private final def objectMapper = new ObjectMapper()
@@ -14,9 +14,9 @@ class RequestQueryParameterConverterTest extends Specification {
     @Shared
     String json = getClass().getResourceAsStream('/unit/oa3.json').getText()
 
-    def 'should successfully convert query parameters'() {
+    def 'should successfully convert cookies'() {
         given:
-        def converter = new RequestQueryParameterConverter(
+        def converter = new RequestCookieConverter(
                 new Oa3Spec(
                         "/check-matchers/1",
                         "post",
@@ -32,21 +32,15 @@ class RequestQueryParameterConverterTest extends Specification {
                 }
 
         then:
-        result.size() == 8
-        result['offset'] == '[20]'
-        result['limit'] == '10'
-        result['filter'] == '"email"'
-        result['search'] == '55'
-        result['name'] == '"John.Doe"'
-        result['sort'] == '"name"'
-        result['age'] == '99'
-        result['email'] == '"bob@email.com"'
+        result.size() == 2
+        result['cookieBar'] == '"cookie-bar-value"'
+        result['cookieFoo'] == '1'
     }
 
     @Unroll
-    def 'should return empty list when query parameters cannot be found for given contract'() {
+    def 'should return empty list when cookies cannot be found for given contract'() {
         given:
-        def converter = new RequestQueryParameterMatcherConverter(
+        def converter = new RequestCookieConverter(
                 new Oa3Spec(
                         "/check-matchers/1",
                         "post",
@@ -56,12 +50,11 @@ class RequestQueryParameterConverterTest extends Specification {
         )
 
         expect:
-        converter.convert().size() == 0
+        converter.convert().isEmpty()
 
         where:
         contractId  | content
         CONTRACT_ID | '{}'
         'unknown'   | json
     }
-
 }
