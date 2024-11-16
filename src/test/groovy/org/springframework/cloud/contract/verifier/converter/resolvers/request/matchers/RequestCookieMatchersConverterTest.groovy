@@ -27,7 +27,7 @@ class RequestCookieMatchersConverterTest extends Specification {
         )
 
         when:
-        List<YamlContract.KeyValueMatcher> result = converter.convert()
+        List<YamlContract.KeyValueMatcher> result = converter.resolve()
 
         then:
         result.size() == 2
@@ -54,7 +54,7 @@ class RequestCookieMatchersConverterTest extends Specification {
         )
 
         expect:
-        converter.convert().size() == 0
+        converter.resolve().size() == 0
 
         where:
         contractId  | content

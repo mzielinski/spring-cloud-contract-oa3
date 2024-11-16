@@ -16,6 +16,10 @@ import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.IN;
 
 public class JsonPathConstants {
 
+    private JsonPathConstants() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static final Configuration JSON_PATH_CONFIGURATION = Configuration.builder()
             .jsonProvider(new JacksonJsonNodeJsonProvider())
             .mappingProvider(new JacksonMappingProvider())

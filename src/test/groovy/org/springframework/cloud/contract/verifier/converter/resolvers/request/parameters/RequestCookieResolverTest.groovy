@@ -6,7 +6,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class RequestCookieConverterTest extends Specification {
+class RequestCookieResolverTest extends Specification {
 
     private static final String CONTRACT_ID = 'contract1'
     private final def objectMapper = new ObjectMapper()
@@ -16,7 +16,7 @@ class RequestCookieConverterTest extends Specification {
 
     def 'should successfully convert cookies'() {
         given:
-        def converter = new RequestCookieConverter(
+        def converter = new RequestCookieResolver(
                 new Oa3Spec(
                         "/check-matchers/1",
                         "post",
@@ -26,7 +26,7 @@ class RequestCookieConverterTest extends Specification {
         )
 
         when:
-        Map<String, String> result = converter.convert()
+        Map<String, String> result = converter.resolve()
                 .collectEntries {
                     [(it.key): it.value as String]
                 }
@@ -40,7 +40,7 @@ class RequestCookieConverterTest extends Specification {
     @Unroll
     def 'should return empty list when cookies cannot be found for given contract'() {
         given:
-        def converter = new RequestCookieConverter(
+        def converter = new RequestCookieResolver(
                 new Oa3Spec(
                         "/check-matchers/1",
                         "post",
@@ -50,7 +50,7 @@ class RequestCookieConverterTest extends Specification {
         )
 
         expect:
-        converter.convert().isEmpty()
+        converter.resolve().isEmpty()
 
         where:
         contractId  | content

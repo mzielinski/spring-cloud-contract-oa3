@@ -1,12 +1,13 @@
 package org.springframework.cloud.contract.verifier.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.UrlPathResolver;
 import org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers.RequestCookieMatcherConverter;
 import org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers.RequestHeaderMatcherConverter;
 import org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers.RequestQueryParameterMatcherConverter;
-import org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters.RequestCookieConverter;
-import org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters.RequestHeaderConverter;
-import org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters.RequestQueryParameterConverter;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters.RequestCookieResolver;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters.RequestHeaderResolver;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters.RequestQueryParameterResolver;
 
 import java.util.Map;
 
@@ -32,22 +33,20 @@ class Oa3ToSccRequest {
         YamlContract.Request yamlRequest = new YamlContract.Request();
 
         // basic parameters
-        yamlRequest.urlPath = find(contract, CONTRACT_PATH)
-                .map(Utils::toText)
-                .orElseGet(() -> spec.calculatePath(contractId));
+        yamlRequest.urlPath = new UrlPathResolver(spec, contractId).resolve();
         yamlRequest.method = spec.httpMethod().toUpperCase();
 
         // query parameters
-        yamlRequest.queryParameters.putAll(new RequestQueryParameterConverter(spec, contractId).convert());
-        yamlRequest.matchers.queryParameters.addAll(new RequestQueryParameterMatcherConverter(spec, contractId).convert());
+        yamlRequest.queryParameters.putAll(new RequestQueryParameterResolver(spec, contractId).resolve());
+        yamlRequest.matchers.queryParameters.addAll(new RequestQueryParameterMatcherConverter(spec, contractId).resolve());
 
         // headers
-        yamlRequest.headers.putAll(new RequestHeaderConverter(spec, contractId).convert());
-        yamlRequest.matchers.headers.addAll(new RequestHeaderMatcherConverter(spec, contractId).convert());
+        yamlRequest.headers.putAll(new RequestHeaderResolver(spec, contractId).resolve());
+        yamlRequest.matchers.headers.addAll(new RequestHeaderMatcherConverter(spec, contractId).resolve());
 
         // cookies
-        yamlRequest.cookies.putAll(new RequestCookieConverter(spec, contractId).convert());
-        yamlRequest.matchers.cookies.addAll(new RequestCookieMatcherConverter(spec, contractId).convert());
+        yamlRequest.cookies.putAll(new RequestCookieResolver(spec, contractId).resolve());
+        yamlRequest.matchers.cookies.addAll(new RequestCookieMatcherConverter(spec, contractId).resolve());
 
 //        yamlRequest.body = get(requestBody, BODY);
 //        yamlRequest.bodyFromFile = get(requestBody, BODY_FROM_FILE);

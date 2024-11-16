@@ -29,7 +29,7 @@ class RequestQueryParameterMatcherConverterTest extends Specification {
         )
 
         when:
-        List<YamlContract.QueryParameterMatcher> result = converter.convert()
+        List<YamlContract.QueryParameterMatcher> result = converter.resolve()
 
         then:
         result.size() == 9
@@ -92,7 +92,7 @@ class RequestQueryParameterMatcherConverterTest extends Specification {
         )
 
         expect:
-        converter.convert().size() == 0
+        converter.resolve().size() == 0
 
         where:
         contractId  | content

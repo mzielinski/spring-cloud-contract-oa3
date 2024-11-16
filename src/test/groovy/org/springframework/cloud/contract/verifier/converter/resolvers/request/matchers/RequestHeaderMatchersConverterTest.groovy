@@ -30,7 +30,7 @@ class RequestHeaderMatchersConverterTest extends Specification {
         )
 
         when:
-        List<YamlContract.KeyValueMatcher> result = converter.convert()
+        List<YamlContract.KeyValueMatcher> result = converter.resolve()
 
         then:
         result.size() == 3
@@ -67,7 +67,7 @@ class RequestHeaderMatchersConverterTest extends Specification {
         )
 
         expect:
-        converter.convert().size() == 0
+        converter.resolve().size() == 0
 
         where:
         contractId  | content

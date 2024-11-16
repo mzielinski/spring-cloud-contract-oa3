@@ -2,8 +2,9 @@ package org.springframework.cloud.contract.verifier.converter.resolvers.request.
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
-import org.springframework.cloud.contract.verifier.converter.resolvers.request.RequestElement;
 import org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathTraverser;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.RequestElement;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.Resolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.MATC
 import static org.springframework.cloud.contract.verifier.converter.Utils.toStream;
 import static org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathConstants.JSON_PATH_CONFIGURATION;
 
-abstract class AbstractRequestMatcherConverter<T> {
+abstract class AbstractRequestMatcherConverter<T> implements Resolver<List<T>> {
 
     private final JsonPathTraverser traverser = new JsonPathTraverser(JSON_PATH_CONFIGURATION);
     private final Oa3Spec spec;
@@ -26,7 +27,8 @@ abstract class AbstractRequestMatcherConverter<T> {
         this.type = type;
     }
 
-    public List<T> convert() {
+    @Override
+    public List<T> resolve() {
         List<T> matchers = new ArrayList<>();
         traverser.requestParameterContracts(spec.operationNode(), contractId, MATCHERS, type.paramField())
                 .forEach((parameterName, matcher) -> matchers.addAll(toMatcher(matcher, parameterName)));
