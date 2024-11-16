@@ -77,7 +77,7 @@ request:
       - key: Content-Type
         regex: "application/json.*"
       - key: headerFoo
-        regex: "bar.*"
+        regex: ".+"
         predefined: only_alpha_unicode
         command: "thing($it)"
         regexType: "as_string"

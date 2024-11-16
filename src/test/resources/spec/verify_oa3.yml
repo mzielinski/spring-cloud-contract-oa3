@@ -110,11 +110,11 @@ paths:
             - contractId: matchers
               value: "barTest"
               matchers:
-                - regex: "bar.*"
+                - regex: ".+"
                   predefined: only_alpha_unicode
                   command: "thing($it)"
                   regexType: "as_string"
-                - regex: "barTest"
+                - regex: ".*"
                   predefined: only_alpha_unicode
                   command: "thing($it)"
                   regexType: "as_string"

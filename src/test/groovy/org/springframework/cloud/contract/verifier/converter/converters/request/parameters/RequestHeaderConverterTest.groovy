@@ -32,9 +32,10 @@ class RequestHeaderConverterTest extends Specification {
                 }
 
         then:
-        result.size() == 2
+        result.size() == 3
         result['Content-Type'] == '"application/json;charset=UTF-8"'
-        result['headerFoo'] == '"barTest"'
+        result['headerFoo'] == '"should be overridden by definition in parameters"'
+        result['headerFoo2'] == '"should be overridden by definition in parameters"'
     }
 
     @Unroll

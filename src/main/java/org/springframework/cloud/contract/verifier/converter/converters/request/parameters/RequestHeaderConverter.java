@@ -16,9 +16,10 @@ public class RequestHeaderConverter extends AbstractRequestParameterConverter {
     @Override
     public Map<String, Object> convert() {
         Map<String, Object> headers = super.convert();
-        headers.putIfAbsent(CONTENT_TYPE_HTTP_HEADER, getTraverser()
-                .requestBodyContentType(getSpec().operationNode())
-                .orElse(null));
+        getTraverser().requestBodyContentType(getSpec().operationNode())
+                .ifPresent(contentType -> {
+                    headers.putIfAbsent(CONTENT_TYPE_HTTP_HEADER, contentType);
+                });
         return headers;
     }
 }

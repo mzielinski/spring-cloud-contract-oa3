@@ -25,7 +25,7 @@ public class JsonPathTraverser {
         this.configuration = configuration;
     }
 
-    public Map<String, JsonNode> requestParameterContracts(JsonNode parentNode, String contractId, String fieldName, String parameterName) {
+    public Map<String, JsonNode> requestParameterContracts(JsonNode parentNode, String contractId, String fieldName, String[] parameterName) {
         return jsonNodeIterator(parentNode, "$.parameters[?]", PARAM_IN_FILTER.apply(parameterName))
                 .filter(jsonNode -> getContractsForField(jsonNode, contractId, fieldName).findAny().isPresent())
                 .collect(Collectors.toMap(
@@ -35,22 +35,15 @@ public class JsonPathTraverser {
     }
 
     public Map<String, JsonNode> requestBodyContracts(JsonNode parentNode, String contractId, String fieldName) {
-        Map<String, JsonNode> result = new LinkedHashMap<>();
-        List<JsonNode> items = jsonNodeIterator(parentNode,
+        List<JsonNode> parameters = jsonNodeIterator(parentNode,
                 "$.requestBody.x-contracts[?]." + fieldName,
                 CONTRACT_ID_FILTER.apply(contractId)).toList();
-        result.putAll(items.stream()
-                .flatMap(it -> toStream(it.iterator()))
-                .filter(it -> it.has(KEY))
-                .collect(Collectors.toMap(
-                        entry -> entry.get(KEY).asText(),
-                        entry -> entry.get(VALUE))));
-        result.putAll(items.stream()
-                .flatMap(it -> toStream(it.fields()))
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue)));
-        return result;
+        return convertToMap(parameters);
+    }
+
+    public Map<String, JsonNode> requestContracts(JsonNode parentNode, String contractId, String fieldName) {
+        List<JsonNode> parameters = getContractsForField(parentNode, contractId, fieldName).toList();
+        return convertToMap(parameters);
     }
 
     public Optional<String> requestBodyContentType(JsonNode parentNode) {
@@ -71,6 +64,22 @@ public class JsonPathTraverser {
         return parentNode != null
                 ? jsonNodeIterator(parentNode, "$.[?]." + fieldName, CONTRACT_ID_FILTER.apply(contractId))
                 : Stream.empty();
+    }
+
+    private static Map<String, JsonNode> convertToMap(List<JsonNode> parameters) {
+        Map<String, JsonNode> result = new LinkedHashMap<>();
+        result.putAll(parameters.stream()
+                .flatMap(it -> toStream(it.iterator()))
+                .filter(it -> it.has(KEY))
+                .collect(Collectors.toMap(
+                        entry -> entry.get(KEY).asText(),
+                        entry -> entry.get(VALUE))));
+        result.putAll(parameters.stream()
+                .flatMap(it -> toStream(it.fields()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue)));
+        return result;
     }
 
     private Stream<JsonNode> jsonNodeIterator(JsonNode parentNode, String jsonPath, Predicate... predicates) {

@@ -23,7 +23,9 @@ public class OpenApiContractConverter implements ContractConverter<Collection<Pa
     @Override
     public boolean isAccepted(File file) {
         try {
-            return oa3Parser.canParse(file);
+            if (oa3Parser.canParse(file)) {
+                return !convertFrom(file).isEmpty();
+            }
         } catch (Exception e) {
             log.error("Error reading OpenAPI specification", e);
         }

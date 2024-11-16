@@ -28,9 +28,9 @@ abstract class AbstractRequestMatcherConverter<T> {
 
     public List<T> convert() {
         List<T> matchers = new ArrayList<>();
-        traverser.requestParameterContracts(spec.operationNode(), contractId, MATCHERS, type.getParameter())
+        traverser.requestParameterContracts(spec.operationNode(), contractId, MATCHERS, type.paramField())
                 .forEach((parameterName, matcher) -> matchers.addAll(toMatcher(matcher, parameterName)));
-        traverser.requestBodyContractMatchers(spec.operationNode(), contractId, type.getRequestBody())
+        traverser.requestBodyContractMatchers(spec.operationNode(), contractId, type.requestField())
                 .forEach(matcher -> matchers.addAll(toMatcher(matcher, matcher.get(KEY).asText())));
         return matchers;
     }

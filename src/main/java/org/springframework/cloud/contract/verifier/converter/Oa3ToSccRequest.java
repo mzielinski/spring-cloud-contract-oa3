@@ -49,21 +49,6 @@ class Oa3ToSccRequest {
         yamlRequest.cookies.putAll(new RequestCookieConverter(spec, contractId).convert());
         yamlRequest.matchers.cookies.addAll(new RequestCookieMatcherConverter(spec, contractId).convert());
 
-//
-//        // httpMethod cookies
-//        spec.operationParameters().stream()
-//                .filter(parameter -> !xContracts(parameter.getExtensions(), contractId).isEmpty())
-//                .filter(parameter -> Objects.equals(COOKIE, parameter.getIn()))
-//                .forEach(parameter -> {
-//                            Map<String, Object> contractParam = xContracts(parameter.getExtensions(), contractId);
-//                            yamlRequest.cookies.put(parameter.getName(), get(contractParam, VALUE));
-//                        }
-//                );
-//
-//        // request body
-//        Map<String, Object> requestBody = xContracts(spec.operationRequestBody().getExtensions(), contractId);
-//        yamlRequest.cookies.putAll(getOrDefault(requestBody, COOKIES, EMPTY_MAP));
-
 //        yamlRequest.body = get(requestBody, BODY);
 //        yamlRequest.bodyFromFile = get(requestBody, BODY_FROM_FILE);
 //        yamlRequest.bodyFromFileAsBytes = get(requestBody, BODY_FROM_FILE_AS_BYTES);
@@ -103,10 +88,6 @@ class Oa3ToSccRequest {
 
 //        request.matchers.url = buildKeyValueMatcher(getOrDefault(matchers, URL, EMPTY_MAP));
 
-//        // request body cookies matchers
-//        request.matchers.cookies.addAll(getOrDefault(matchers, COOKIES, EMPTY_LIST).stream()
-//                .map(this::buildKeyValueMatcher).toList());
-//
 //        // request body matchers
 //        List<YamlContract.BodyStubMatcher> requestBodyStubMatchers = getOrDefault(matchers, BODY, EMPTY_LIST).stream()
 //                .map(this::buildBodyStubMatcher).toList();

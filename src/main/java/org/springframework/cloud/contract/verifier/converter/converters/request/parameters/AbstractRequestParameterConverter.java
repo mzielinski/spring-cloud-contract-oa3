@@ -6,6 +6,7 @@ import org.springframework.cloud.contract.verifier.converter.converters.JsonPath
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.VALUE;
 import static org.springframework.cloud.contract.verifier.converter.converters.JsonPathConstants.JSON_PATH_CONFIGURATION;
@@ -24,9 +25,10 @@ abstract class AbstractRequestParameterConverter {
     }
 
     public Map<String, Object> convert() {
-        Map<String, Object> parameters = new LinkedHashMap<>();
-        parameters.putAll(traverser.requestParameterContracts(spec.operationNode(), contractId, VALUE, type.getParameter()));
-        parameters.putAll(traverser.requestBodyContracts(spec.operationNode(), contractId, type.getRequestBody()));
+        Map<String, Object> parameters = new TreeMap<>();
+        parameters.putAll(traverser.requestParameterContracts(spec.operationNode(), contractId, VALUE, type.paramField()));
+        parameters.putAll(traverser.requestBodyContracts(spec.operationNode(), contractId, type.requestField()));
+        parameters.putAll(traverser.requestContracts(spec.operationNode(), contractId, type.requestField()));
         return parameters;
     }
 
