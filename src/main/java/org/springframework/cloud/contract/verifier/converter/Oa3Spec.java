@@ -2,8 +2,6 @@ package org.springframework.cloud.contract.verifier.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -63,39 +61,20 @@ public record Oa3Spec(String path, String httpMethod, JsonNode operationNode, Js
     public static final String X_CONTRACTS = "x-contracts";
     public static final String[] OPENAPI_OPERATIONS = new String[]{"get", "put", "head", "post", "delete", "patch", "options", "trace"};
 
-    public String calculatePath(String contractId) {
-        return Optional.ofNullable(parametersNode())
-                .map(parameters -> toStream(parameters.iterator())
-                        .map(parameter -> findContract(parameter, contractId)
-                                .map(value -> Map.entry(
-                                        parameter.get(NAME).asText(),
-                                        value.get(VALUE).asText()))
-                                .orElse(null))
-                        .filter(Objects::nonNull)
-                        .reduce(path(),
-                                (currentPath, entry) -> currentPath.replace("{" + entry.getKey() + "}", entry.getValue()),
-                                (p1, p2) -> p1))
-                .orElseGet(this::path);
-    }
 
+    @Deprecated
     public static Optional<String> getContentType(JsonNode root) {
         return Optional.ofNullable(root)
                 .map(node -> node.get(CONTENT))
                 .flatMap(node -> toStream(node.fieldNames()).findFirst());
     }
 
+    @Deprecated
     public static Stream<JsonNode> xContracts(JsonNode node, String nodeName) {
         return findSubNodes(node, nodeName, X_CONTRACTS);
     }
 
-    public static Optional<JsonNode> findContract(JsonNode node, String contractId) {
-        return Optional.ofNullable(node)
-                .map(n -> n.get(X_CONTRACTS))
-                .flatMap(contracts -> toStream(contracts.iterator())
-                        .filter(contract -> contractId.equalsIgnoreCase(toText(contract.get(CONTRACT_ID))))
-                        .findAny());
-    }
-
+    @Deprecated
     public static Optional<JsonNode> findContract(JsonNode parentNode, String nodeName, String contractId) {
         return xContracts(parentNode, nodeName)
                 .filter(contract -> contractId.equalsIgnoreCase(toText(contract.get(CONTRACT_ID))))

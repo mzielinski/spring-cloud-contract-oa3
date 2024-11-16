@@ -27,10 +27,10 @@ public class JsonPathTraverser {
 
     public Map<String, JsonNode> requestParameterContracts(JsonNode parentNode, String contractId, String fieldName, String[] parameterName) {
         return jsonNodeIterator(parentNode, "$.parameters[?]", PARAM_IN_FILTER.apply(parameterName))
-                .filter(jsonNode -> getContractsForField(jsonNode, contractId, fieldName).findAny().isPresent())
+                .filter(jsonNode -> findContractsForField(jsonNode, contractId, fieldName).findAny().isPresent())
                 .collect(Collectors.toMap(
                         parameter -> parameter.get(NAME).asText(),
-                        parameter -> getContractsForField(parameter, contractId, fieldName).findAny().orElseThrow()
+                        parameter -> findContractsForField(parameter, contractId, fieldName).findAny().orElseThrow()
                 ));
     }
 
@@ -42,7 +42,7 @@ public class JsonPathTraverser {
     }
 
     public Map<String, JsonNode> requestContracts(JsonNode parentNode, String contractId, String fieldName) {
-        List<JsonNode> parameters = getContractsForField(parentNode, contractId, fieldName).toList();
+        List<JsonNode> parameters = findContractsForField(parentNode, contractId, fieldName).toList();
         return convertToMap(parameters);
     }
 
@@ -59,7 +59,7 @@ public class JsonPathTraverser {
                 .toList();
     }
 
-    private Stream<JsonNode> getContractsForField(JsonNode parameterNode, String contractId, String fieldName) {
+    public Stream<JsonNode> findContractsForField(JsonNode parameterNode, String contractId, String fieldName) {
         JsonNode parentNode = parameterNode.get(X_CONTRACTS);
         return parentNode != null
                 ? jsonNodeIterator(parentNode, "$.[?]." + fieldName, CONTRACT_ID_FILTER.apply(contractId))

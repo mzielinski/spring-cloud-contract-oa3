@@ -3,9 +3,9 @@ request:
   method: "GET"
   url: null
   urlPath: "/company/MACIEJOS/doughnuts/PEANUT_BUTTER"
-  queryParameters:
-    companyId: "MACIEJOS"
-    doughnutId: "PEANUT_BUTTER"
+#  queryParameters:
+#    companyId: "MACIEJOS"
+#    doughnutId: "PEANUT_BUTTER"
   headers: {}
   cookies: {}
   body: null

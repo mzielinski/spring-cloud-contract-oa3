@@ -88,10 +88,10 @@ class OpenApiContactConverterTest extends Specification {
 
         where:
         oa3Filename                   || contractFilename
-//        'verify_swagger_petstore.yml' || 'contract_swagger_petstore.yml'
-//        'verify_fraud_service.yml'    || 'contract_fraud_service.yml'
-//        'verify_oa3.yml'              || 'contract_oa3.yml'
-//        'verify_playground.yml'       || 'contract_playground.yml'
+        'verify_swagger_petstore.yml' || 'contract_swagger_petstore.yml'
+        'verify_fraud_service.yml'    || 'contract_fraud_service.yml'
+        'verify_oa3.yml'              || 'contract_oa3.yml'
+        'verify_playground.yml'       || 'contract_playground.yml'
         'verify_path_parameter.yml'   || 'contract_path_parameter.yml'
 //        'asyncapi_sccoa3_basic.yml'   || 'contract_asyncapi_sccoa3_basic.yml'
     }

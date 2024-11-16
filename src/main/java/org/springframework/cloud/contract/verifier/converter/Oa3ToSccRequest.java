@@ -20,13 +20,10 @@ class Oa3ToSccRequest {
 
     private final Oa3Spec spec;
     private final String contractId;
-    private final JsonNode contract;
 
     Oa3ToSccRequest(Oa3Spec spec, String contractId) {
         this.spec = spec;
         this.contractId = contractId;
-        this.contract = findContract(spec.operationNode(), contractId)
-                .orElseThrow(() -> new IllegalArgumentException("Contract " + contractId + " not found"));
     }
 
     YamlContract.Request convertToRequest() {
