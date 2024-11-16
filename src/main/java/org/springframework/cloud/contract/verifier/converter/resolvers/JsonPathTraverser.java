@@ -35,10 +35,14 @@ public class JsonPathTraverser {
     }
 
     public Map<String, JsonNode> requestBodyContracts(JsonNode parentNode, String contractId, String fieldName) {
-        List<JsonNode> parameters = jsonNodeIterator(parentNode,
+        List<JsonNode> parameters = requestBodyContractList(parentNode, contractId, fieldName);
+        return convertToMap(parameters);
+    }
+
+    public List<JsonNode> requestBodyContractList(JsonNode parentNode, String contractId, String fieldName) {
+        return jsonNodeIterator(parentNode,
                 "$.requestBody.x-contracts[?]." + fieldName,
                 CONTRACT_ID_FILTER.apply(contractId)).toList();
-        return convertToMap(parameters);
     }
 
     public Map<String, JsonNode> requestContracts(JsonNode parentNode, String contractId, String fieldName) {

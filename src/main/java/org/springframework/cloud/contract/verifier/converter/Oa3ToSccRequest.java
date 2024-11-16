@@ -1,7 +1,9 @@
 package org.springframework.cloud.contract.verifier.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.cloud.contract.verifier.converter.resolvers.request.UrlPathResolver;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.body.RequestBodyFileResolver;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.body.RequestBodyResolver;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.url.UrlPathResolver;
 import org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers.RequestCookieMatcherConverter;
 import org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers.RequestHeaderMatcherConverter;
 import org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers.RequestQueryParameterMatcherConverter;
@@ -45,10 +47,11 @@ class Oa3ToSccRequest {
         yamlRequest.cookies.putAll(new RequestCookieResolver(spec, contractId).resolve());
         yamlRequest.matchers.cookies.addAll(new RequestCookieMatcherConverter(spec, contractId).resolve());
 
-//        yamlRequest.body = get(requestBody, BODY);
-//        yamlRequest.bodyFromFile = get(requestBody, BODY_FROM_FILE);
-//        yamlRequest.bodyFromFileAsBytes = get(requestBody, BODY_FROM_FILE_AS_BYTES);
-//
+        // body
+        yamlRequest.body = new RequestBodyResolver(spec, contractId).resolve();
+        yamlRequest.bodyFromFile = new RequestBodyFileResolver(spec, contractId, BODY_FROM_FILE).resolve();
+        yamlRequest.bodyFromFileAsBytes = new RequestBodyFileResolver(spec, contractId,  BODY_FROM_FILE_AS_BYTES).resolve();
+
 //        // request body multipart
 //        Map<String, Object> requestBodyMultipart = getOrDefault(requestBody, MULTIPART, EMPTY_MAP);
 //        if (!requestBodyMultipart.isEmpty()) {

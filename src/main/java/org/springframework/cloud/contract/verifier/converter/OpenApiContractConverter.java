@@ -1,5 +1,6 @@
 package org.springframework.cloud.contract.verifier.converter;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.oas.models.PathItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,8 @@ public class OpenApiContractConverter implements ContractConverter<Collection<Pa
     @Override
     public Collection<Contract> convertFrom(File file) {
         try {
-            return oa3ToScc.convert(oa3Parser.parseOpenAPI(file))
+            List<JsonNode> nodes = oa3Parser.parseOpenAPI(file);
+            return oa3ToScc.convert(nodes)
                     .map(tempYamlToContracts::convertFromYaml)
                     .flatMap(Collection::stream)
                     .toList();

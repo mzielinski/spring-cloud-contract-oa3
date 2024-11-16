@@ -16,10 +16,8 @@ public class RequestHeaderResolver extends AbstractRequestParameterResolver {
     @Override
     public Map<String, Object> resolve() {
         Map<String, Object> headers = super.resolve();
-        getTraverser().requestBodyContentType(getSpec().operationNode())
-                .ifPresent(contentType -> {
-                    headers.putIfAbsent(CONTENT_TYPE_HTTP_HEADER, contentType);
-                });
+        traverser().requestBodyContentType(spec().operationNode())
+                .ifPresent(contentType -> headers.putIfAbsent(CONTENT_TYPE_HTTP_HEADER, contentType));
         return headers;
     }
 }
