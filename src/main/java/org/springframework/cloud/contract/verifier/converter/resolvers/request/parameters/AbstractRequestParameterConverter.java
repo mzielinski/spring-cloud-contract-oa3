@@ -1,15 +1,14 @@
-package org.springframework.cloud.contract.verifier.converter.converters.request.parameters;
+package org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters;
 
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
-import org.springframework.cloud.contract.verifier.converter.converters.request.RequestElement;
-import org.springframework.cloud.contract.verifier.converter.converters.JsonPathTraverser;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.RequestElement;
+import org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathTraverser;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.VALUE;
-import static org.springframework.cloud.contract.verifier.converter.converters.JsonPathConstants.JSON_PATH_CONFIGURATION;
+import static org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathConstants.JSON_PATH_CONFIGURATION;
 
 abstract class AbstractRequestParameterConverter {
 

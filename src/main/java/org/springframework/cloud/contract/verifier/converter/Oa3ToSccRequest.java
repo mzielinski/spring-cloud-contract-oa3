@@ -1,12 +1,12 @@
 package org.springframework.cloud.contract.verifier.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.cloud.contract.verifier.converter.converters.request.matchers.RequestCookieMatcherConverter;
-import org.springframework.cloud.contract.verifier.converter.converters.request.matchers.RequestHeaderMatcherConverter;
-import org.springframework.cloud.contract.verifier.converter.converters.request.matchers.RequestQueryParameterMatcherConverter;
-import org.springframework.cloud.contract.verifier.converter.converters.request.parameters.RequestCookieConverter;
-import org.springframework.cloud.contract.verifier.converter.converters.request.parameters.RequestHeaderConverter;
-import org.springframework.cloud.contract.verifier.converter.converters.request.parameters.RequestQueryParameterConverter;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers.RequestCookieMatcherConverter;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers.RequestHeaderMatcherConverter;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers.RequestQueryParameterMatcherConverter;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters.RequestCookieConverter;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters.RequestHeaderConverter;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters.RequestQueryParameterConverter;
 
 import java.util.Map;
 

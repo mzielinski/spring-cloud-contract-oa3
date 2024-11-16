@@ -1,4 +1,4 @@
-package org.springframework.cloud.contract.verifier.converter.converters.request;
+package org.springframework.cloud.contract.verifier.converter.resolvers.request;
 
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
 

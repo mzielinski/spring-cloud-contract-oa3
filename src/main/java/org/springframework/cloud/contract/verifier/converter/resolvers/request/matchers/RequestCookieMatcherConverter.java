@@ -1,7 +1,7 @@
-package org.springframework.cloud.contract.verifier.converter.converters.request.matchers;
+package org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers;
 
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
-import org.springframework.cloud.contract.verifier.converter.converters.request.RequestElement;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.RequestElement;
 
 public class RequestCookieMatcherConverter extends AbstractRequestKeyValueMatcherConverter {
 

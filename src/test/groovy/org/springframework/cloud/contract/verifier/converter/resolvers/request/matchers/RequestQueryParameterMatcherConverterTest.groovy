@@ -1,11 +1,10 @@
-package org.springframework.cloud.contract.verifier.converter.converters.request.matchers
+package org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.TextNode
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec
 import org.springframework.cloud.contract.verifier.converter.YamlContract
-import org.springframework.cloud.contract.verifier.converter.converters.request.matchers.RequestQueryParameterMatcherConverter
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll

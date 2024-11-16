@@ -1,4 +1,4 @@
-package org.springframework.cloud.contract.verifier.converter.converters;
+package org.springframework.cloud.contract.verifier.converter.resolvers;
 
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.Criteria;

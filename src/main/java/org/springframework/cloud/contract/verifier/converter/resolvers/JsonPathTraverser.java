@@ -1,4 +1,4 @@
-package org.springframework.cloud.contract.verifier.converter.converters;
+package org.springframework.cloud.contract.verifier.converter.resolvers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.Configuration;
@@ -14,8 +14,8 @@ import java.util.stream.Stream;
 
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.*;
 import static org.springframework.cloud.contract.verifier.converter.Utils.toStream;
-import static org.springframework.cloud.contract.verifier.converter.converters.JsonPathConstants.CONTRACT_ID_FILTER;
-import static org.springframework.cloud.contract.verifier.converter.converters.JsonPathConstants.PARAM_IN_FILTER;
+import static org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathConstants.CONTRACT_ID_FILTER;
+import static org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathConstants.PARAM_IN_FILTER;
 
 public class JsonPathTraverser {
 

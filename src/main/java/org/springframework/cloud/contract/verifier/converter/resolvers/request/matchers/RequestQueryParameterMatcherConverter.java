@@ -1,9 +1,9 @@
-package org.springframework.cloud.contract.verifier.converter.converters.request.matchers;
+package org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
 import org.springframework.cloud.contract.verifier.converter.YamlContract.QueryParameterMatcher;
-import org.springframework.cloud.contract.verifier.converter.converters.request.RequestElement;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.RequestElement;
 
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.TYPE;
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.VALUE;

@@ -1,13 +1,12 @@
-package org.springframework.cloud.contract.verifier.converter.converters.request.matchers
+package org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec
-import org.springframework.cloud.contract.verifier.converter.YamlContract
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class RequestCookieMatchersConverterTest extends Specification {
+class RequestCookieConverterTest extends Specification {
 
     private static final String CONTRACT_ID = 'contract1'
     private final def objectMapper = new ObjectMapper()
@@ -15,9 +14,9 @@ class RequestCookieMatchersConverterTest extends Specification {
     @Shared
     String json = getClass().getResourceAsStream('/unit/oa3.json').getText()
 
-    def 'should successfully convert cookie matchers'() {
+    def 'should successfully convert cookies'() {
         given:
-        def converter = new RequestCookieMatcherConverter(
+        def converter = new RequestCookieConverter(
                 new Oa3Spec(
                         "/check-matchers/1",
                         "post",
@@ -27,24 +26,21 @@ class RequestCookieMatchersConverterTest extends Specification {
         )
 
         when:
-        List<YamlContract.KeyValueMatcher> result = converter.convert()
+        Map<String, String> result = converter.convert()
+                .collectEntries {
+                    [(it.key): it.value as String]
+                }
 
         then:
         result.size() == 2
-        result.contains(new YamlContract.KeyValueMatcher(
-                key: 'cookieFoo',
-                regex: '[0-9]'
-        ))
-        result.contains(new YamlContract.KeyValueMatcher(
-                key: 'cookieBar',
-                command: 'equals($it)'
-        ))
+        result['cookieBar'] == '"cookie-bar-value"'
+        result['cookieFoo'] == '1'
     }
 
     @Unroll
-    def 'should return empty list when cookies matchers cannot be found for given contract'() {
+    def 'should return empty list when cookies cannot be found for given contract'() {
         given:
-        def converter = new RequestCookieMatcherConverter(
+        def converter = new RequestCookieConverter(
                 new Oa3Spec(
                         "/check-matchers/1",
                         "post",
@@ -54,7 +50,7 @@ class RequestCookieMatchersConverterTest extends Specification {
         )
 
         expect:
-        converter.convert().size() == 0
+        converter.convert().isEmpty()
 
         where:
         contractId  | content

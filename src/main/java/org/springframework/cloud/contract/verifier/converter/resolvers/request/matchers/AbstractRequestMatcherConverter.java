@@ -1,9 +1,9 @@
-package org.springframework.cloud.contract.verifier.converter.converters.request.matchers;
+package org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
-import org.springframework.cloud.contract.verifier.converter.converters.request.RequestElement;
-import org.springframework.cloud.contract.verifier.converter.converters.JsonPathTraverser;
+import org.springframework.cloud.contract.verifier.converter.resolvers.request.RequestElement;
+import org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathTraverser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.KEY;
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.MATCHERS;
 import static org.springframework.cloud.contract.verifier.converter.Utils.toStream;
-import static org.springframework.cloud.contract.verifier.converter.converters.JsonPathConstants.JSON_PATH_CONFIGURATION;
+import static org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathConstants.JSON_PATH_CONFIGURATION;
 
 abstract class AbstractRequestMatcherConverter<T> {
 
