@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface Oa3Parser {
     boolean canParse(File file);
+
     List<JsonNode> parseOpenAPI(File file);
 }
