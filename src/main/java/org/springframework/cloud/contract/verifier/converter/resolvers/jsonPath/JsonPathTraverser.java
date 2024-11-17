@@ -23,7 +23,9 @@ public class JsonPathTraverser {
     }
 
     public Map<String, JsonNode> requestParameterContracts(JsonNode parentNode, String contractId, String fieldName, String... parameterName) {
-        return jsonNodeIterator(parentNode, "$.parameters[?]", PARAM_IN_FILTER.apply(parameterName))
+        return jsonNodeIterator(parentNode,
+                "$.%s[?]".formatted(PARAMETERS),
+                PARAM_IN_FILTER.apply(parameterName))
                 .filter(jsonNode -> findContractsForField(jsonNode, contractId, fieldName).findAny().isPresent())
                 .collect(Collectors.toMap(
                         parameter -> parameter.get(NAME).asText(),
@@ -38,7 +40,7 @@ public class JsonPathTraverser {
 
     public List<JsonNode> requestBodyContractList(JsonNode parentNode, String contractId, String fieldName) {
         return jsonNodeIterator(parentNode,
-                "$.requestBody.x-contracts[?]." + fieldName,
+                "$.%s.%s[?].%s".formatted(REQUEST_BODY, X_CONTRACTS, fieldName),
                 CONTRACT_ID_FILTER.apply(contractId)).toList();
     }
 
@@ -48,7 +50,7 @@ public class JsonPathTraverser {
     }
 
     public Optional<String> requestBodyContentType(JsonNode parentNode) {
-        return Optional.ofNullable(jsonNode(parentNode, "$.requestBody"))
+        return Optional.ofNullable(jsonNode(parentNode, "$.%s".formatted(REQUEST_BODY)))
                 .map(requestBody -> requestBody.get(CONTENT))
                 .flatMap(a -> toStream(a.fieldNames()).findFirst());
     }
@@ -64,16 +66,16 @@ public class JsonPathTraverser {
         return convertToMap(matchers);
     }
 
-    private Stream<JsonNode> requestBodyContractMatcherStream(JsonNode parentNode, String contractId, String fieldName) {
+    public Stream<JsonNode> requestBodyContractMatcherStream(JsonNode parentNode, String contractId, String fieldName) {
         return jsonNodeIterator(parentNode,
-                "$.requestBody.x-contracts[?].matchers." + fieldName,
+                "$.%s.%s[?].%s.%s".formatted(REQUEST_BODY, X_CONTRACTS, MATCHERS, fieldName),
                 CONTRACT_ID_FILTER.apply(contractId));
     }
 
     public Stream<JsonNode> findContractsForField(JsonNode parameterNode, String contractId, String fieldName) {
         JsonNode parentNode = parameterNode.get(X_CONTRACTS);
         return parentNode != null
-                ? jsonNodeIterator(parentNode, "$.[?]." + fieldName, CONTRACT_ID_FILTER.apply(contractId))
+                ? jsonNodeIterator(parentNode, "$.[?].%s".formatted(fieldName), CONTRACT_ID_FILTER.apply(contractId))
                 : Stream.empty();
     }
 

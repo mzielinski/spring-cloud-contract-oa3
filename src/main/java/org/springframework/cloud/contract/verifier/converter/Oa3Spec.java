@@ -51,7 +51,6 @@ public record Oa3Spec(String path, String httpMethod, JsonNode operationNode, Js
     public static final String QUERY_PARAMETERS = "queryParameters";
     public static final String REGEX = "regex";
     public static final String REGEX_TYPE = "regexType";
-    public static final String REQUEST = "request";
     public static final String REQUEST_BODY = "requestBody";
     public static final String RESPONSES = "responses";
     public static final String SERVICE_NAME = "serviceName";

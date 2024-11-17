@@ -2,6 +2,7 @@ package org.springframework.cloud.contract.verifier.converter.resolvers.request.
 
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
 import org.springframework.cloud.contract.verifier.converter.YamlContract.KeyValueMatcher;
+import org.springframework.cloud.contract.verifier.converter.resolvers.builders.SccModelBuilder;
 import org.springframework.cloud.contract.verifier.converter.resolvers.request.AbstractResolver;
 
 public class UrlPathMatcherResolver extends AbstractResolver<KeyValueMatcher> {
@@ -12,7 +13,9 @@ public class UrlPathMatcherResolver extends AbstractResolver<KeyValueMatcher> {
 
     @Override
     public KeyValueMatcher resolve() {
-//        buildKeyValueMatcher(getOrDefault(matchers, URL, EMPTY_MAP));
-        return null;
+        return traverser().requestBodyContractMatcherStream(operationNode(), contractId(), Oa3Spec.URL)
+                .map(SccModelBuilder::toKeyValueMatcher)
+                .findFirst()
+                .orElse(null);
     }
 }
