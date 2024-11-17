@@ -2,7 +2,6 @@ package org.springframework.cloud.contract.verifier.converter.resolvers.request.
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec
-import org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers.RequestQueryParameterMatcherConverter
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll

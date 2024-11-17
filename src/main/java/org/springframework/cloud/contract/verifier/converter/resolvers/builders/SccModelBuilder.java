@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
+import org.springframework.cloud.contract.verifier.converter.YamlContract.*;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -21,8 +22,8 @@ public class SccModelBuilder {
         throw new IllegalStateException("Utility class");
     }
 
-    public static YamlContract.BodyStubMatcher toBodyStubMatcher(JsonNode node) {
-        YamlContract.BodyStubMatcher matcher = new YamlContract.BodyStubMatcher();
+    public static BodyStubMatcher toBodyStubMatcher(JsonNode node) {
+        BodyStubMatcher matcher = new BodyStubMatcher();
         matcher.path = toText(node.get(PATH));
         matcher.value = toText(node.get(VALUE));
         matcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
@@ -36,8 +37,8 @@ public class SccModelBuilder {
         return matcher;
     }
 
-    public static YamlContract.BodyTestMatcher toBodyTestMatcher(JsonNode node) {
-        YamlContract.BodyTestMatcher bodyStubMatcher = new YamlContract.BodyTestMatcher();
+    public static BodyTestMatcher toBodyTestMatcher(JsonNode node) {
+        BodyTestMatcher bodyStubMatcher = new BodyTestMatcher();
         bodyStubMatcher.path = toText(node.get(PATH));
         bodyStubMatcher.value = toText(node.get(VALUE));
         bodyStubMatcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
@@ -50,8 +51,8 @@ public class SccModelBuilder {
         return bodyStubMatcher;
     }
 
-    public static YamlContract.TestHeaderMatcher toTestHeaderMatcher(JsonNode node) {
-        YamlContract.TestHeaderMatcher headersMatcher = new YamlContract.TestHeaderMatcher();
+    public static TestHeaderMatcher toTestHeaderMatcher(JsonNode node) {
+        TestHeaderMatcher headersMatcher = new TestHeaderMatcher();
         headersMatcher.key = toText(node.get(KEY));
         headersMatcher.regex = toText(node.get(REGEX));
         headersMatcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
@@ -60,8 +61,8 @@ public class SccModelBuilder {
         return headersMatcher;
     }
 
-    public static YamlContract.TestCookieMatcher toTestCookieMatcher(JsonNode node) {
-        YamlContract.TestCookieMatcher testCookieMatcher = new YamlContract.TestCookieMatcher();
+    public static TestCookieMatcher toTestCookieMatcher(JsonNode node) {
+        TestCookieMatcher testCookieMatcher = new TestCookieMatcher();
         testCookieMatcher.key = toText(node.get(KEY));
         testCookieMatcher.regex = toText(node.get(REGEX));
         testCookieMatcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
@@ -70,16 +71,16 @@ public class SccModelBuilder {
         return testCookieMatcher;
     }
 
-    public static YamlContract.QueryParameterMatcher toQueryParameterMatcher(String parameterName, JsonNode matcher) {
-        YamlContract.QueryParameterMatcher queryParameterMatcher = new YamlContract.QueryParameterMatcher();
+    public static QueryParameterMatcher toQueryParameterMatcher(String parameterName, JsonNode matcher) {
+        QueryParameterMatcher queryParameterMatcher = new QueryParameterMatcher();
         queryParameterMatcher.key = parameterName;
         queryParameterMatcher.value = matcher.get(VALUE);
         queryParameterMatcher.type = createMatchingType(matcher.get(TYPE).asText());
         return queryParameterMatcher;
     }
 
-    public static  YamlContract.KeyValueMatcher toKeyValueMatcher(String name, JsonNode matcher) {
-        YamlContract.KeyValueMatcher keyValueMatcher = new YamlContract.KeyValueMatcher();
+    public static  KeyValueMatcher toKeyValueMatcher(String name, JsonNode matcher) {
+        KeyValueMatcher keyValueMatcher = new KeyValueMatcher();
         keyValueMatcher.key = name;
         keyValueMatcher.regex = toText(matcher.get(REGEX));
         keyValueMatcher.predefined = createPredefinedRegex(toText(matcher.get(PREDEFINED)));

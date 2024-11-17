@@ -1,17 +1,17 @@
 package org.springframework.cloud.contract.verifier.converter.resolvers.request.multipart;
 
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
-import org.springframework.cloud.contract.verifier.converter.YamlContract;
+import org.springframework.cloud.contract.verifier.converter.YamlContract.MultipartStubMatcher;
 import org.springframework.cloud.contract.verifier.converter.resolvers.request.AbstractResolver;
 
-public class RequestMultipartMatcherResolver extends AbstractResolver<YamlContract.MultipartStubMatcher> {
+public class RequestMultipartMatcherResolver extends AbstractResolver<MultipartStubMatcher> {
 
     public RequestMultipartMatcherResolver(Oa3Spec spec, String contractId) {
         super(spec, contractId);
     }
 
     @Override
-    public YamlContract.MultipartStubMatcher resolve() {
+    public MultipartStubMatcher resolve() {
 
 //        Map<String, Object> matchersMultipart = getOrDefault(matchers, MULTIPART, EMPTY_MAP);
 //        if (!matchersMultipart.isEmpty()) {
@@ -34,7 +34,7 @@ public class RequestMultipartMatcherResolver extends AbstractResolver<YamlContra
 //            request.matchers.multipart.named.addAll(stubMatchers);
 //        }
 
-        return new YamlContract.MultipartStubMatcher();
+        return new MultipartStubMatcher();
     }
 
 //    private YamlContract.ValueMatcher buildValueMatcher(Map<String, Object> matcher, String key) {

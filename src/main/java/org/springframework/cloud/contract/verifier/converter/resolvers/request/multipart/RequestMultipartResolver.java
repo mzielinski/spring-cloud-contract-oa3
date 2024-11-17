@@ -3,6 +3,7 @@ package org.springframework.cloud.contract.verifier.converter.resolvers.request.
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
+import org.springframework.cloud.contract.verifier.converter.YamlContract.Multipart;
 import org.springframework.cloud.contract.verifier.converter.resolvers.request.AbstractResolver;
 
 import java.util.List;
@@ -13,17 +14,17 @@ import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.*;
 import static org.springframework.cloud.contract.verifier.converter.Utils.toStream;
 import static org.springframework.cloud.contract.verifier.converter.Utils.toText;
 
-public class RequestMultipartResolver extends AbstractResolver<YamlContract.Multipart> {
+public class RequestMultipartResolver extends AbstractResolver<Multipart> {
 
     public RequestMultipartResolver(Oa3Spec spec, String contractId) {
         super(spec, contractId);
     }
 
     @Override
-    public YamlContract.Multipart resolve() {
+    public Multipart resolve() {
         Map<String, JsonNode> multipart = traverser().requestBodyContracts(operationNode(), contractId(), MULTIPART);
         if (!multipart.isEmpty()) {
-            var yamlMultipart = new YamlContract.Multipart();
+            var yamlMultipart = new Multipart();
             yamlMultipart.params.putAll(paramsToMap(multipart));
             yamlMultipart.named.addAll(namedToList(multipart));
             return yamlMultipart;

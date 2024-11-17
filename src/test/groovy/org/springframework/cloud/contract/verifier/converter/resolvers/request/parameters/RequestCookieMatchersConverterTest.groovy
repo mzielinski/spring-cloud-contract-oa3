@@ -1,4 +1,4 @@
-package org.springframework.cloud.contract.verifier.converter.resolvers.request.matchers
+package org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec
