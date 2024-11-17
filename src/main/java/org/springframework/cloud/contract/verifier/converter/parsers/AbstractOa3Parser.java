@@ -19,19 +19,19 @@ abstract class AbstractOa3Parser implements Oa3Parser {
     }
 
     @Override
-    public boolean canParse(File file) {
+    public boolean validExtension(File file) {
         return extensions.stream().anyMatch(ext -> file.getName().endsWith(ext));
     }
 
     @Override
-    public List<JsonNode> parseOpenAPI(File file) {
+    public List<JsonNode> parseSpecification(File file) {
         try {
-            return objectMapper.readValues(getJsonParser(file), new TypeReference<JsonNode>() {
+            return objectMapper.readValues(jsonParser(file), new TypeReference<JsonNode>() {
             }).readAll();
         } catch (IOException ex) {
             throw new IllegalArgumentException("OpenAPI specification %s not found".formatted(file.getPath()));
         }
     }
 
-    abstract JsonParser getJsonParser(File file) throws IOException;
+    abstract JsonParser jsonParser(File file) throws IOException;
 }

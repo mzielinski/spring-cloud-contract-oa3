@@ -19,7 +19,7 @@ public class YamlOa3Parser extends AbstractOa3Parser {
     }
 
     @Override
-    JsonParser getJsonParser(File file) throws IOException {
+    JsonParser jsonParser(File file) throws IOException {
         return yamlFactory.createParser(file);
     }
 }

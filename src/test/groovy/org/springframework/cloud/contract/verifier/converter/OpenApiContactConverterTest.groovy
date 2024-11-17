@@ -44,7 +44,7 @@ class OpenApiContactConverterTest extends Specification {
         'verify_swagger_petstore.yml'        || 3
         'openapi_payor.yml'                  || 4
         'openapi_velo_payments.yml'          || 10
-//        'openapi_sccoa3_basic.json'          || 3
+        'openapi_sccoa3_basic.json'          || 3
         'openapi_sccoa3_basic.yml'           || 3
 //        'asyncapi_sccoa3_basic.yml'          || 1
     }

@@ -7,11 +7,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.contract.spec.Contract;
 import org.springframework.cloud.contract.spec.ContractConverter;
 import org.springframework.cloud.contract.verifier.converter.parsers.Oa3Parser;
-import org.springframework.cloud.contract.verifier.converter.parsers.YamlOa3Parser;
+import org.springframework.cloud.contract.verifier.converter.parsers.Oa3ParserStrategy;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class OpenApiContractConverter implements ContractConverter<Collection<PathItem>> {
 
@@ -19,14 +20,18 @@ public class OpenApiContractConverter implements ContractConverter<Collection<Pa
 
     private final TempYamlToContracts tempYamlToContracts = new TempYamlToContracts();
     private final Oa3ToScc oa3ToScc = new Oa3ToScc();
-    private final Oa3Parser oa3Parser = new YamlOa3Parser();
+    private final Oa3ParserStrategy oa3ParserStrategy = new Oa3ParserStrategy();
+
+    private Optional<Oa3Parser> getOa3Parser(File file) {
+        return oa3ParserStrategy.resolve(file);
+    }
 
     @Override
     public boolean isAccepted(File file) {
         try {
-            if (oa3Parser.canParse(file)) {
-                return !convertFrom(file).isEmpty();
-            }
+            return getOa3Parser(file)
+                    .map($ -> !convertFrom(file).isEmpty())
+                    .orElse(false);
         } catch (Exception e) {
             log.error("Error reading OpenAPI specification", e);
         }
@@ -36,7 +41,9 @@ public class OpenApiContractConverter implements ContractConverter<Collection<Pa
     @Override
     public Collection<Contract> convertFrom(File file) {
         try {
-            List<JsonNode> nodes = oa3Parser.parseOpenAPI(file);
+            List<JsonNode> nodes = getOa3Parser(file)
+                    .map(oa3Parser -> oa3Parser.parseSpecification(file))
+                    .orElseThrow(() -> new IllegalArgumentException("Unsupported OpenAPI specification file: " + file.getAbsolutePath()));
             return oa3ToScc.convert(nodes)
                     .map(tempYamlToContracts::convertFromYaml)
                     .flatMap(Collection::stream)
