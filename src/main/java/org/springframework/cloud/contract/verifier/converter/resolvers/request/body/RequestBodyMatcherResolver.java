@@ -18,7 +18,7 @@ public class RequestBodyMatcherResolver extends AbstractResolver<List<BodyStubMa
     @Override
     public List<BodyStubMatcher> resolve() {
         return traverser()
-                .requestBodyContractMatchers(operationNode(), contractId(), BODY).stream()
+                .requestBodyContractMatcherList(operationNode(), contractId(), BODY).stream()
                 .map(SccModelBuilder::toBodyStubMatcher)
                 .toList();
     }

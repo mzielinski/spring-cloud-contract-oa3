@@ -3,8 +3,10 @@ package org.springframework.cloud.contract.verifier.converter.resolvers.builders
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.contract.verifier.converter.YamlContract;
 import org.springframework.cloud.contract.verifier.converter.YamlContract.*;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -16,7 +18,7 @@ public class SccModelBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(SccModelBuilder.class);
 
-    public SccModelBuilder() {
+    private SccModelBuilder() {
         throw new IllegalStateException("Utility class");
     }
 
@@ -86,6 +88,10 @@ public class SccModelBuilder {
         return matcher;
     }
 
+    public static KeyValueMatcher toKeyValueMatcher(JsonNode node) {
+        return toKeyValueMatcher(toText(node.get(KEY)), node);
+    }
+
     public static KeyValueMatcher toKeyValueMatcher(String name, JsonNode node) {
         KeyValueMatcher matcher = new KeyValueMatcher();
         matcher.key = name;
@@ -94,6 +100,26 @@ public class SccModelBuilder {
         matcher.command = toText(node.get(COMMAND));
         matcher.regexType = createRegexType(toText(node.get(REGEX_TYPE)));
         return matcher;
+    }
+
+    public static MultipartNamedStubMatcher toMultipartNamedStubMatcher(JsonNode node) {
+        MultipartNamedStubMatcher namedStubMatcher = new MultipartNamedStubMatcher();
+        namedStubMatcher.paramName = toText(node.get(PARAM_NAME));
+        namedStubMatcher.fileName = toValueMatcher(node, FILE_NAME);
+        namedStubMatcher.fileContent = toValueMatcher(node, FILE_CONTENT);
+        namedStubMatcher.contentType = toValueMatcher(node, CONTENT_TYPE_HTTP_HEADER);
+        return namedStubMatcher;
+    }
+
+    private static ValueMatcher toValueMatcher(JsonNode parentNode, String fieldName) {
+        return Optional.ofNullable(parentNode)
+                .map(node -> node.get(fieldName))
+                .map(subNode -> {
+                    YamlContract.ValueMatcher valueMatcher = new YamlContract.ValueMatcher();
+                    valueMatcher.regex = toText(subNode.get(REGEX));
+                    valueMatcher.predefined = createPredefinedRegex(toText(subNode.get(PREDEFINED)));
+                    return valueMatcher;
+                }).orElse(null);
     }
 
     private static TestMatcherType createTestMatcherType(String val) {

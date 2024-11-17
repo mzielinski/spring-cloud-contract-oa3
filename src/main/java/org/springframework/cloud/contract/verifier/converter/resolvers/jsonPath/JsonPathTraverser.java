@@ -5,10 +5,7 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Predicate;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -56,11 +53,21 @@ public class JsonPathTraverser {
                 .flatMap(a -> toStream(a.fieldNames()).findFirst());
     }
 
-    public List<JsonNode> requestBodyContractMatchers(JsonNode parentNode, String contractId, String fieldName) {
+    public List<JsonNode> requestBodyContractMatcherList(JsonNode parentNode, String contractId, String fieldName) {
+        return requestBodyContractMatcherStream(parentNode, contractId, fieldName)
+                .flatMap(it -> toStream(it.iterator()))
+                .toList();
+    }
+
+    public Map<String, JsonNode> requestBodyContractMatchers(JsonNode parentNode, String contractId, String fieldName) {
+        List<JsonNode> matchers = requestBodyContractMatcherStream(parentNode, contractId, fieldName).toList();
+        return convertToMap(matchers);
+    }
+
+    private Stream<JsonNode> requestBodyContractMatcherStream(JsonNode parentNode, String contractId, String fieldName) {
         return jsonNodeIterator(parentNode,
                 "$.requestBody.x-contracts[?].matchers." + fieldName,
-                CONTRACT_ID_FILTER.apply(contractId)).flatMap(it -> toStream(it.iterator()))
-                .toList();
+                CONTRACT_ID_FILTER.apply(contractId));
     }
 
     public Stream<JsonNode> findContractsForField(JsonNode parameterNode, String contractId, String fieldName) {
@@ -71,7 +78,7 @@ public class JsonPathTraverser {
     }
 
     private static Map<String, JsonNode> convertToMap(List<JsonNode> parameters) {
-        Map<String, JsonNode> result = new LinkedHashMap<>();
+        Map<String, JsonNode> result = new TreeMap<>();
         result.putAll(parameters.stream()
                 .flatMap(it -> toStream(it.iterator()))
                 .filter(it -> it.has(KEY))

@@ -19,32 +19,32 @@ request:
     search: 55
     sort: name
   body:
-    duck: 123
-    alpha: "abc"
-    number: 123
     aBoolean: true
+    alpha: "abc"
     date: "2017-01-01"
     dateTime: "2017-01-01T01:23:45"
-    time: "01:02:34"
-    valueWithoutAMatcher: "foo"
-    valueWithTypeMatch: "string"
+    duck: 123
     key:
       "complex.key": 'foo'
     nullValue: null
-    valueWithMin:
-      - 1
-      - 2
-      - 3
+    number: 123
+    time: "01:02:34"
     valueWithMax:
       - 1
       - 2
       - 3
-    valueWithMinMax:
+    valueWithMaxEmpty: [ ]
+    valueWithMin:
       - 1
       - 2
       - 3
     valueWithMinEmpty: [ ]
-    valueWithMaxEmpty: [ ]
+    valueWithMinMax:
+      - 1
+      - 2
+      - 3
+    valueWithTypeMatch: "string"
+    valueWithoutAMatcher: "foo"
   matchers:
     url:
       regex: /check-matchers/[0-9]
@@ -122,12 +122,15 @@ request:
 response:
   status: 200
   body:
-    duck: 123
-    alpha: "abc"
-    number: 123
     aBoolean: true
+    alpha: "abc"
     date: "2017-01-01"
     dateTime: "2017-01-01T01:23:45"
+    duck: 123
+    key:
+      'complex.key': 'foo'
+    nulValue: null
+    number: 123
     time: "01:02:34"
     valueWithoutAMatcher: "foo"
     valueWithTypeMatch: "string"
@@ -145,9 +148,6 @@ response:
       - 3
     valueWithMinEmpty: [ ]
     valueWithMaxEmpty: [ ]
-    key:
-      'complex.key': 'foo'
-    nulValue: null
   matchers:
     headers:
       - key: Content-Type
