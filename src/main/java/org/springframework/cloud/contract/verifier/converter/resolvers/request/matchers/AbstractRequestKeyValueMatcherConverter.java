@@ -3,12 +3,8 @@ package org.springframework.cloud.contract.verifier.converter.resolvers.request.
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
 import org.springframework.cloud.contract.verifier.converter.YamlContract;
+import org.springframework.cloud.contract.verifier.converter.resolvers.builders.SccModelBuilder;
 import org.springframework.cloud.contract.verifier.converter.resolvers.request.RequestElement;
-
-import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.*;
-import static org.springframework.cloud.contract.verifier.converter.SccUtils.createPredefinedRegex;
-import static org.springframework.cloud.contract.verifier.converter.SccUtils.createRegexType;
-import static org.springframework.cloud.contract.verifier.converter.Utils.toText;
 
 abstract class AbstractRequestKeyValueMatcherConverter extends AbstractRequestMatcherConverter<YamlContract.KeyValueMatcher> {
 
@@ -17,13 +13,7 @@ abstract class AbstractRequestKeyValueMatcherConverter extends AbstractRequestMa
     }
 
     @Override
-    protected YamlContract.KeyValueMatcher mapToMatchers(String headerName, JsonNode matcher) {
-        YamlContract.KeyValueMatcher keyValueMatcher = new YamlContract.KeyValueMatcher();
-        keyValueMatcher.key = headerName;
-        keyValueMatcher.regex = toText(matcher.get(REGEX));
-        keyValueMatcher.predefined = createPredefinedRegex(toText(matcher.get(PREDEFINED)));
-        keyValueMatcher.command = toText(matcher.get(COMMAND));
-        keyValueMatcher.regexType = createRegexType(toText(matcher.get(REGEX_TYPE)));
-        return keyValueMatcher;
+    protected YamlContract.KeyValueMatcher mapToMatchers(String name, JsonNode matcher) {
+        return SccModelBuilder.toKeyValueMatcher(name, matcher);
     }
 }

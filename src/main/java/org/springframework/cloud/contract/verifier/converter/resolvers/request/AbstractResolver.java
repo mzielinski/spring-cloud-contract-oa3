@@ -2,9 +2,9 @@ package org.springframework.cloud.contract.verifier.converter.resolvers.request;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec;
-import org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathTraverser;
+import org.springframework.cloud.contract.verifier.converter.resolvers.jsonPath.JsonPathTraverser;
 
-import static org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathConstants.JSON_PATH_CONFIGURATION;
+import static org.springframework.cloud.contract.verifier.converter.resolvers.jsonPath.JsonPathConstants.JSON_PATH_CONFIGURATION;
 
 public abstract class AbstractResolver<T> {
 

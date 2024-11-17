@@ -33,7 +33,7 @@ class Oa3ToScc {
         yaml.priority = toInteger(contract.get(PRIORITY));
         yaml.label = toText(contract.get(LABEL));
         yaml.ignored = toBoolean(contract.get(IGNORED));
-        yaml.request = new Oa3ToSccRequest(spec, contractId).convertToRequest();
+        yaml.request = new Oa3ToSccRequest(spec, contractId).resolveRequest();
         yaml.response = new Oa3ToSccResponse(spec, contractId).convertToResponse();
         return yaml;
     }

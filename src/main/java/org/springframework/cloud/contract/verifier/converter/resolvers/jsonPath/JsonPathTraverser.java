@@ -1,4 +1,4 @@
-package org.springframework.cloud.contract.verifier.converter.resolvers;
+package org.springframework.cloud.contract.verifier.converter.resolvers.jsonPath;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jayway.jsonpath.Configuration;
@@ -14,8 +14,8 @@ import java.util.stream.Stream;
 
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.*;
 import static org.springframework.cloud.contract.verifier.converter.Utils.toStream;
-import static org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathConstants.CONTRACT_ID_FILTER;
-import static org.springframework.cloud.contract.verifier.converter.resolvers.JsonPathConstants.PARAM_IN_FILTER;
+import static org.springframework.cloud.contract.verifier.converter.resolvers.jsonPath.JsonPathConstants.CONTRACT_ID_FILTER;
+import static org.springframework.cloud.contract.verifier.converter.resolvers.jsonPath.JsonPathConstants.PARAM_IN_FILTER;
 
 public class JsonPathTraverser {
 
@@ -25,7 +25,7 @@ public class JsonPathTraverser {
         this.configuration = configuration;
     }
 
-    public Map<String, JsonNode> requestParameterContracts(JsonNode parentNode, String contractId, String fieldName, String[] parameterName) {
+    public Map<String, JsonNode> requestParameterContracts(JsonNode parentNode, String contractId, String fieldName, String... parameterName) {
         return jsonNodeIterator(parentNode, "$.parameters[?]", PARAM_IN_FILTER.apply(parameterName))
                 .filter(jsonNode -> findContractsForField(jsonNode, contractId, fieldName).findAny().isPresent())
                 .collect(Collectors.toMap(

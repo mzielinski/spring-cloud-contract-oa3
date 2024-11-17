@@ -15,26 +15,4 @@ public class SccUtils {
         throw new AssertionError("Utility class");
     }
 
-    public static YamlContract.MatchingType createMatchingType(String val) {
-        return tryToParse(val, YamlContract.MatchingType::valueOf);
-    }
-
-    public static YamlContract.PredefinedRegex createPredefinedRegex(String val) {
-        return tryToParse(val, YamlContract.PredefinedRegex::valueOf);
-    }
-
-    public static YamlContract.RegexType createRegexType(String val) {
-        return tryToParse(val, YamlContract.RegexType::valueOf);
-    }
-
-    private static <T> T tryToParse(String val, Function<String, T> function) {
-        if (isNotBlank(val)) {
-            try {
-                return function.apply(val);
-            } catch (Exception e) {
-                log.error("Error parsing value {}", val, e);
-            }
-        }
-        return null;
-    }
 }

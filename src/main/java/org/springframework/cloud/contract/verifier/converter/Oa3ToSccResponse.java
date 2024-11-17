@@ -1,14 +1,9 @@
 package org.springframework.cloud.contract.verifier.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.cloud.contract.verifier.converter.YamlContract.BodyTestMatcher;
-import org.springframework.cloud.contract.verifier.converter.YamlContract.TestCookieMatcher;
-import org.springframework.cloud.contract.verifier.converter.YamlContract.TestHeaderMatcher;
-import org.springframework.cloud.contract.verifier.converter.YamlContract.TestMatcherType;
+import org.springframework.cloud.contract.verifier.converter.resolvers.builders.SccModelBuilder;
 
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.*;
-import static org.springframework.cloud.contract.verifier.converter.SccUtils.createPredefinedRegex;
-import static org.springframework.cloud.contract.verifier.converter.SccUtils.createRegexType;
 import static org.springframework.cloud.contract.verifier.converter.Utils.*;
 
 class Oa3ToSccResponse {
@@ -46,50 +41,18 @@ class Oa3ToSccResponse {
 
         // response body matchers
         yamlResponse.matchers.body.addAll(findSubNodes(contract, MATCHERS, BODY)
-                .map(this::buildBodyTestMatcher).toList());
+                .map(SccModelBuilder::toBodyTestMatcher).toList());
 
         // response header matchers
         yamlResponse.matchers.headers.addAll(findSubNodes(contract, MATCHERS, HEADERS)
-                .map(this::buildTestHeaderMatchers).toList());
+                .map(SccModelBuilder::toTestHeaderMatcher).toList());
 
         // response cookies matchers
         yamlResponse.matchers.cookies.addAll(findSubNodes(contract, MATCHERS, COOKIES)
-                .map(this::buildTestCookieMatchers).toList());
+                .map(SccModelBuilder::toTestCookieMatcher).toList());
 
         return yamlResponse;
     }
 
-    private TestHeaderMatcher buildTestHeaderMatchers(JsonNode node) {
-        TestHeaderMatcher headersMatcher = new TestHeaderMatcher();
-        headersMatcher.key = toText(node.get(KEY));
-        headersMatcher.regex = toText(node.get(REGEX));
-        headersMatcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
-        headersMatcher.command = toText(node.get(COMMAND));
-        headersMatcher.regexType = createRegexType(toText(node.get(REGEX_TYPE)));
-        return headersMatcher;
-    }
 
-    private TestCookieMatcher buildTestCookieMatchers(JsonNode node) {
-        TestCookieMatcher testCookieMatcher = new TestCookieMatcher();
-        testCookieMatcher.key = toText(node.get(KEY));
-        testCookieMatcher.regex = toText(node.get(REGEX));
-        testCookieMatcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
-        testCookieMatcher.command = toText(node.get(COMMAND));
-        testCookieMatcher.regexType = createRegexType(toText(node.get(REGEX_TYPE)));
-        return testCookieMatcher;
-    }
-
-    private BodyTestMatcher buildBodyTestMatcher(JsonNode node) {
-        BodyTestMatcher bodyStubMatcher = new BodyTestMatcher();
-        bodyStubMatcher.path = toText(node.get(PATH));
-        bodyStubMatcher.value = toText(node.get(VALUE));
-        bodyStubMatcher.predefined = createPredefinedRegex(toText(node.get(PREDEFINED)));
-        bodyStubMatcher.minOccurrence = toInteger(node.get(MIN_OCCURRENCE));
-        bodyStubMatcher.maxOccurrence = toInteger(node.get(MAX_OCCURRENCE));
-        bodyStubMatcher.regexType = createRegexType(toText(node.get(REGEX_TYPE)));
-        if (node.get(TYPE) != null) {
-            bodyStubMatcher.type = TestMatcherType.valueOf(toText(node.get(TYPE)));
-        }
-        return bodyStubMatcher;
-    }
 }
