@@ -231,6 +231,11 @@ paths:
             application/json:
               schema:
                 type: string
+          headers:
+            X-RateLimit-Limit:
+              schema:
+                type: integer
+              description: Request limit per hour.
           x-contracts:
             - contractId: matchers
               headers:

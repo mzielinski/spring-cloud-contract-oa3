@@ -17,6 +17,9 @@ public class Utils {
     }
 
     public static <T> Stream<T> toStream(Iterator<T> iterator) {
+        if (iterator == null) {
+            return Stream.empty();
+        }
         return StreamSupport.stream(
                 Spliterators.spliteratorUnknownSize(iterator, 0),
                 false

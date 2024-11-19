@@ -34,7 +34,7 @@ class Oa3ToScc {
         yaml.label = toText(contract.get(LABEL));
         yaml.ignored = toBoolean(contract.get(IGNORED));
         yaml.request = new Oa3ToSccRequest(spec, contractId).resolveRequest();
-        yaml.response = new Oa3ToSccResponse(spec, contractId).convertToResponse();
+        yaml.response = new Oa3ToSccResponse(spec, contractId).resolveResponse();
         return yaml;
     }
 }

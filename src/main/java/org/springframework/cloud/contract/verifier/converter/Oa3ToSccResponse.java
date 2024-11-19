@@ -1,10 +1,6 @@
 package org.springframework.cloud.contract.verifier.converter;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.cloud.contract.verifier.converter.resolvers.builders.SccModelBuilder;
-
-import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.*;
-import static org.springframework.cloud.contract.verifier.converter.Utils.*;
+import org.springframework.cloud.contract.verifier.converter.resolvers.response.headers.ResponseHeaderResolver;
 
 class Oa3ToSccResponse {
 
@@ -16,43 +12,40 @@ class Oa3ToSccResponse {
         this.contractId = contractId;
     }
 
-    YamlContract.Response convertToResponse() {
-        JsonNode responseNode = spec.operationNode().get(RESPONSES);
-        return toStream(responseNode.fields())
-                .map(entry -> findContract(responseNode, entry.getKey(), contractId)
-                        .map(contract -> convertToResponse(entry.getKey(), entry.getValue(), contract))
-                        .orElseGet(YamlContract.Response::new))
-                .findAny()
-                .orElseGet(YamlContract.Response::new);
-    }
-
-    private YamlContract.Response convertToResponse(String responseCode, JsonNode spec, JsonNode contract) {
+    YamlContract.Response resolveResponse() {
         YamlContract.Response yamlResponse = new YamlContract.Response();
 
         // response basic
-        yamlResponse.status = Integer.parseInt(responseCode.replaceAll("[^a-zA-Z0-9 ]+", ""));
-        yamlResponse.body = contract.get(BODY); // Convert to expected object
-        yamlResponse.bodyFromFile = toText(contract.get(BODY_FROM_FILE_AS_BYTES));
-        yamlResponse.bodyFromFileAsBytes = toText(contract.get(BODY_FROM_FILE_AS_BYTES));
+//        yamlResponse.status = Integer.parseInt(responseCode.replaceAll("[^a-zA-Z0-9 ]+", ""));
 
-        // response headers
-        getContentType(spec).ifPresent(contentType -> yamlResponse.headers.put(CONTENT_TYPE_HTTP_HEADER, contentType));
-        yamlResponse.headers.putAll(toMap(contract.get(HEADERS)));
+        // headers
+        yamlResponse.headers.putAll(new ResponseHeaderResolver(spec, contractId).resolve());
 
-        // response body matchers
-        yamlResponse.matchers.body.addAll(findSubNodes(contract, MATCHERS, BODY)
-                .map(SccModelBuilder::toBodyTestMatcher).toList());
+//        yamlResponse.matchers.headers.addAll(new RequestHeaderMatcherConverter(spec, contractId).resolve());
 
-        // response header matchers
-        yamlResponse.matchers.headers.addAll(findSubNodes(contract, MATCHERS, HEADERS)
-                .map(SccModelBuilder::toTestHeaderMatcher).toList());
+        // cookies
+//        yamlResponse.cookies.putAll(new RequestCookieResolver(spec, contractId).resolve());
+//        yamlResponse.matchers.cookies.addAll(new RequestCookieMatcherConverter(spec, contractId).resolve());
 
-        // response cookies matchers
-        yamlResponse.matchers.cookies.addAll(findSubNodes(contract, MATCHERS, COOKIES)
-                .map(SccModelBuilder::toTestCookieMatcher).toList());
+        // body
+//        yamlResponse.body = new RequestBodyResolver(spec, contractId).resolve();
+//        yamlResponse.bodyFromFile = new RequestBodyFileResolver(spec, contractId, BODY_FROM_FILE).resolve();
+//        yamlResponse.bodyFromFileAsBytes = new RequestBodyFileResolver(spec, contractId, BODY_FROM_FILE_AS_BYTES).resolve();
+//        yamlResponse.matchers.body = new RequestBodyMatcherResolver(spec, contractId).resolve();
+
+//
+//        // response body matchers
+//        yamlResponse.matchers.body.addAll(findSubNodes(contract, MATCHERS, BODY)
+//                .map(SccModelBuilder::toBodyTestMatcher).toList());
+//
+//        // response header matchers
+//        yamlResponse.matchers.headers.addAll(findSubNodes(contract, MATCHERS, HEADERS)
+//                .map(SccModelBuilder::toTestHeaderMatcher).toList());
+//
+//        // response cookies matchers
+//        yamlResponse.matchers.cookies.addAll(findSubNodes(contract, MATCHERS, COOKIES)
+//                .map(SccModelBuilder::toTestCookieMatcher).toList());
 
         return yamlResponse;
     }
-
-
 }

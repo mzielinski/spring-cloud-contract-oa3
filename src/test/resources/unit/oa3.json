@@ -395,11 +395,20 @@
           }
         }
       },
+      "headers": {
+        "X-RateLimit-Limit": {
+          "schema": {
+            "type": "integer"
+          },
+          "description": "Request limit per hour."
+        }
+      },
       "x-contracts": [
         {
           "contractId": "contract1",
           "headers": {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "X-RateLimit-Limit": 60
           },
           "body": {
             "duck": 123,

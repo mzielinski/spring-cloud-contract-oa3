@@ -1,4 +1,4 @@
-package org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters
+package org.springframework.cloud.contract.verifier.converter.resolvers.request.cookies
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec
@@ -6,7 +6,7 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class RequestHeaderResolverTest extends Specification {
+class RequestCookieResolverTest extends Specification {
 
     private static final String CONTRACT_ID = 'contract1'
     private final def objectMapper = new ObjectMapper()
@@ -14,9 +14,9 @@ class RequestHeaderResolverTest extends Specification {
     @Shared
     String json = getClass().getResourceAsStream('/unit/oa3.json').getText()
 
-    def 'should successfully convert headers'() {
+    def 'should successfully convert cookies'() {
         given:
-        def converter = new RequestHeaderResolver(
+        def converter = new RequestCookieResolver(
                 new Oa3Spec(
                         "/check-matchers/1",
                         "post",
@@ -32,16 +32,15 @@ class RequestHeaderResolverTest extends Specification {
                 }
 
         then:
-        result.size() == 3
-        result['Content-Type'] == '"application/json;charset=UTF-8"'
-        result['headerFoo'] == '"should be overridden by definition in parameters"'
-        result['headerFoo2'] == '"should be overridden by definition in parameters"'
+        result.size() == 2
+        result['cookieBar'] == '"cookie-bar-value"'
+        result['cookieFoo'] == '1'
     }
 
     @Unroll
-    def 'should return empty list when headers cannot be found for given contract'() {
+    def 'should return empty list when cookies cannot be found for given contract'() {
         given:
-        def converter = new RequestHeaderResolver(
+        def converter = new RequestCookieResolver(
                 new Oa3Spec(
                         "/check-matchers/1",
                         "post",
@@ -50,16 +49,12 @@ class RequestHeaderResolverTest extends Specification {
                 ), contractId
         )
 
-        when:
-        Map<String, Object> headers = converter.resolve()
-
-        then:
-        headers.size() == 1
-        headers['Content-Type'] == 'application/json'
+        expect:
+        converter.resolve().isEmpty()
 
         where:
         contractId  | content
-        CONTRACT_ID | '{"requestBody":{"content":{"application/json":""}}}'
+        CONTRACT_ID | '{}'
         'unknown'   | json
     }
 }

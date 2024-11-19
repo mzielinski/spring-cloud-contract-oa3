@@ -1,13 +1,12 @@
-package org.springframework.cloud.contract.verifier.converter.resolvers.request.parameters
+package org.springframework.cloud.contract.verifier.converter.resolvers.response.headers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.cloud.contract.verifier.converter.Oa3Spec
-import org.springframework.cloud.contract.verifier.converter.YamlContract
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class RequestCookieMatchersConverterTest extends Specification {
+class ResponseHeaderResolverTest extends Specification {
 
     private static final String CONTRACT_ID = 'contract1'
     private final def objectMapper = new ObjectMapper()
@@ -15,9 +14,9 @@ class RequestCookieMatchersConverterTest extends Specification {
     @Shared
     String json = getClass().getResourceAsStream('/unit/oa3.json').getText()
 
-    def 'should successfully convert cookie matchers'() {
+    def 'should successfully convert headers'() {
         given:
-        def converter = new RequestCookieMatcherConverter(
+        def converter = new ResponseHeaderResolver(
                 new Oa3Spec(
                         "/check-matchers/1",
                         "post",
@@ -27,24 +26,21 @@ class RequestCookieMatchersConverterTest extends Specification {
         )
 
         when:
-        List<YamlContract.KeyValueMatcher> result = converter.resolve()
+        Map<String, String> result = converter.resolve()
+                .collectEntries {
+                    [(it.key): it.value as String]
+                }
 
         then:
         result.size() == 2
-        result.contains(new YamlContract.KeyValueMatcher(
-                key: 'cookieFoo',
-                regex: '[0-9]'
-        ))
-        result.contains(new YamlContract.KeyValueMatcher(
-                key: 'cookieBar',
-                command: 'equals($it)'
-        ))
+        result['Content-Type'] == '"application/json"'
+        result['X-RateLimit-Limit'] == '60'
     }
 
     @Unroll
-    def 'should return empty list when cookies matchers cannot be found for given contract'() {
+    def 'should return empty list when headers cannot be found for given contract'() {
         given:
-        def converter = new RequestCookieMatcherConverter(
+        def converter = new ResponseHeaderResolver(
                 new Oa3Spec(
                         "/check-matchers/1",
                         "post",
@@ -53,12 +49,16 @@ class RequestCookieMatchersConverterTest extends Specification {
                 ), contractId
         )
 
-        expect:
-        converter.resolve().size() == 0
+        when:
+        Map<String, Object> headers = converter.resolve()
+
+        then:
+        headers.size() == 1
+        headers['Content-Type'] == 'application/json'
 
         where:
         contractId  | content
-        CONTRACT_ID | '{}'
+        CONTRACT_ID | '{"responses":{"200": {"content":{"application/json":""}}}}'
         'unknown'   | json
     }
 }

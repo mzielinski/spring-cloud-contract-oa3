@@ -46,7 +46,7 @@ class OpenApiContactConverterTest extends Specification {
         'openapi_velo_payments.yml'          || 10
         'openapi_sccoa3_basic.json'          || 3
         'openapi_sccoa3_basic.yml'           || 3
-//        'asyncapi_sccoa3_basic.yml'          || 1
+        'asyncapi_sccoa3_basic.yml'          || 1
     }
 
     @Unroll
@@ -93,7 +93,7 @@ class OpenApiContactConverterTest extends Specification {
         'verify_oa3.yml'              || 'contract_oa3.yml'
         'verify_playground.yml'       || 'contract_playground.yml'
         'verify_path_parameter.yml'   || 'contract_path_parameter.yml'
-//        'asyncapi_sccoa3_basic.yml'   || 'contract_asyncapi_sccoa3_basic.yml'
+        'asyncapi_sccoa3_basic.yml'   || 'contract_asyncapi_sccoa3_basic.yml'
     }
 
     def 'should verify that bodyFromFileAsBytes is properly converted to contract'() {
