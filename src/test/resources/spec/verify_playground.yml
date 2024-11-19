@@ -15,6 +15,7 @@ paths:
           headers:
             Content-Type: application/json
             'X-SSL-Client-DN': admin@idemia.com
+          serviceName: serviceName
 
       requestBody:
         content:

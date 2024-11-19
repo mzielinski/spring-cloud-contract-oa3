@@ -1,8 +1,9 @@
 package org.springframework.cloud.contract.verifier.converter;
 
-import io.swagger.v3.oas.models.OpenAPI;
+import com.fasterxml.jackson.databind.JsonNode;
 
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.springframework.cloud.contract.verifier.converter.Oa3Spec.*;
@@ -12,28 +13,28 @@ class Oa3ToScc {
 
     private final ServiceNameVerifier serviceNameVerifier = new ServiceNameVerifier();
 
-    Stream<YamlContract> convert(OpenAPI openApi) {
-        return openApi.getPaths().entrySet().stream()
-                .flatMap(path -> path.getValue().readOperations().stream()
-                        .filter(operation -> operation.getExtensions() != null && operation.getExtensions().get(X_CONTRACTS) != null)
-                        .flatMap(operation -> {
-                            Oa3Spec spec = new Oa3Spec(path.getKey(), path.getValue(), operation);
-                            return getOrDefault(operation.getExtensions(), X_CONTRACTS, EMPTY_LIST).stream()
-                                    .filter(contracts -> serviceNameVerifier.checkServiceEnabled(get(contracts, SERVICE_NAME)))
-                                    .map(contracts -> getYamlContract(spec, contracts));
-                        }));
+    Stream<YamlContract> convert(List<JsonNode> nodes) {
+        return nodes.stream().flatMap(node -> toStream(node.get(PATHS).fields())
+                .flatMap(pathNode -> Arrays.stream(OPENAPI_OPERATIONS)
+                        .filter(operation -> pathNode.getValue().get(operation) != null)
+                        .flatMap(pathMethod -> xContracts(pathNode.getValue(), pathMethod)
+                                .filter(contract -> serviceNameVerifier.checkServiceEnabled(contract.get(SERVICE_NAME)))
+                                .map(contract -> {
+                                    JsonNode value = pathNode.getValue();
+                                    Oa3Spec spec = new Oa3Spec(pathNode.getKey(), pathMethod, value.get(pathMethod), value.get(PARAMETERS));
+                                    return getYamlContract(spec, contract, toText(contract.get(CONTRACT_ID)));
+                                }))));
     }
 
-    private YamlContract getYamlContract(Oa3Spec spec, Map<String, Object> contract) {
-        Object contractId = get(contract, CONTRACT_ID);
+    private YamlContract getYamlContract(Oa3Spec spec, JsonNode contract, String contractId) {
         YamlContract yaml = new YamlContract();
-        yaml.name = get(contract, NAME);
-        yaml.description = get(contract, DESCRIPTION);
-        yaml.priority = get(contract, PRIORITY);
-        yaml.label = get(contract, LABEL);
-        yaml.ignored = getOrDefault(contract, IGNORED, false);
-        yaml.request = new Oa3ToSccRequest(spec, contractId).convert(contract);
-        yaml.response = new Oa3ToSccResponse(spec, contractId).convert();
+        yaml.name = toText(contract.get(NAME));
+        yaml.description = toText(contract.get(DESCRIPTION));
+        yaml.priority = toInteger(contract.get(PRIORITY));
+        yaml.label = toText(contract.get(LABEL));
+        yaml.ignored = toBoolean(contract.get(IGNORED));
+        yaml.request = new Oa3ToSccRequest(spec, contractId).resolveRequest();
+        yaml.response = new Oa3ToSccResponse(spec, contractId).resolveResponse();
         return yaml;
     }
 }

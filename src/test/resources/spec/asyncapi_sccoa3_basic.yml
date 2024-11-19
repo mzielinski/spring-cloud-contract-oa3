@@ -1,0 +1,93 @@
+asyncapi: 2.0.0
+info:
+  title: Hello world application
+  version: '0.1.0'
+
+servers:
+  production:
+    url: kafka.bootstrap:{port}
+    protocol: kafka
+    variables:
+      port:
+        default: '9092'
+        enum:
+          - '9092'
+          - '9093'
+
+defaultContentType: application/json;charset=UTF-8
+
+channels:
+  hello:
+    x-contracts:
+      - contractId: 1
+        name: Should Send Message As A
+        description: A longer description
+        priority: 1
+      - contractId: 2
+        name: Should Send Message As B
+      - contractId: 3
+        name: Should Receive Message As A
+      - contractId: 4
+        name: Should Receive Message As B
+    publish:
+      bindings:
+        kafka:
+          groupId: my-group
+      operationId: sendHello
+      message:
+        name: GreetingPayload
+        payload:
+          $ref: '#/components/schemas/Person'
+        x-contracts:
+          - contractId: 1
+            body:
+              name: "A"
+              age: 10
+            matchers:
+              body:
+                - path: $.age
+                  type: by_equality
+                  value: 10
+          - contractId: 2
+            body:
+              name: "B"
+              age: 20
+            matchers:
+              body:
+                - path: $.age
+                  type: by_equality
+                  value: 20
+
+    subscribe:
+      message:
+        description: Someone said hello. We will repond
+        payload:
+          $ref: '#/components/schemas/GreetingPayload'
+        x-contracts:
+          - contractId: 3
+            body:
+              phrase: "Hello, A"
+          - contractId: 4
+            body:
+              phrase: "Hello, B"
+
+components:
+  schemas:
+    Person:
+      description: A person, I guess
+      type: object
+      properties:
+        name:
+          type: string
+          example: Test
+        age:
+          type: integer
+          example: 10
+      required:
+        - name
+    GreetingPayload:
+      description: A greeting
+      type: object
+      properties:
+        phrase:
+          type: string

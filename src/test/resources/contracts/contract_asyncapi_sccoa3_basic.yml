@@ -1,0 +1,14 @@
+description: A longer description
+name: Should Send Message As A
+priority: 1
+ignored: false
+outputMessage:
+  sentTo: hello
+  body:
+    name: "A"
+    age: 10
+  matchers:
+    body:
+      - path: $.age
+        type: by_equality
+        value: 10

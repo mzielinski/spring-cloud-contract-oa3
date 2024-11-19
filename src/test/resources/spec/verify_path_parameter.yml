@@ -35,6 +35,9 @@ paths:
       x-contracts:
         - contractId: 1
           name: Should return doughnut by id
+        - contractId: 2
+          name: Should return doughnut by id
+          contractPath: "/company/MACIEJOS/doughnuts/PEANUT_BUTTER"
       responses:
         '200':
           description: Ok
@@ -44,6 +47,12 @@ paths:
                 $ref: '#/components/schemas/DoughnutDto'
           x-contracts:
             - contractId: 1
+              body:
+                doughnutId: "PEANUT_BUTTER"
+                cost: 1.99
+              headers:
+                Content-Type: application/json
+            - contractId: 2
               body:
                 doughnutId: "PEANUT_BUTTER"
                 cost: 1.99

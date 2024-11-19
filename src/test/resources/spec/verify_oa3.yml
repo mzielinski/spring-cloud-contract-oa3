@@ -10,9 +10,10 @@ paths:
       operationId: matchers
       x-contracts:
         - contractId: matchers
-          name: Should verify basic fileds and matchers
+          name: Should verify basic fields and matchers
           headers:
             headerFoo: 'should be overridden by definition in parameters'
+            headerFoo2: 'should be overridden by definition in parameters'
       parameters:
         - name: limit
           in: query
@@ -109,7 +110,11 @@ paths:
             - contractId: matchers
               value: "barTest"
               matchers:
-                - regex: "bar.*"
+                - regex: ".+"
+                  predefined: only_alpha_unicode
+                  command: "thing($it)"
+                  regexType: "as_string"
+                - regex: ".*"
                   predefined: only_alpha_unicode
                   command: "thing($it)"
                   regexType: "as_string"
@@ -120,19 +125,22 @@ paths:
               type: string
         x-contracts:
           - contractId: matchers
+            headers:
+              - key: Content-Type
+                value: application/json;charset=UTF-8
             body:
-              duck: 123
-              alpha: "abc"
-              number: 123
               aBoolean: true
+              alpha: "abc"
               date: "2017-01-01"
               dateTime: "2017-01-01T01:23:45"
+              duck: 123
+              nullValue: null
+              number: 123
+              key:
+                "complex.key": 'foo'
               time: "01:02:34"
               valueWithoutAMatcher: "foo"
               valueWithTypeMatch: "string"
-              key:
-                "complex.key": 'foo'
-              nullValue: null
               valueWithMin:
                 - 1
                 - 2
@@ -223,8 +231,15 @@ paths:
             application/json:
               schema:
                 type: string
+          headers:
+            X-RateLimit-Limit:
+              schema:
+                type: integer
+              description: Request limit per hour.
           x-contracts:
             - contractId: matchers
+              headers:
+                Content-Type: "application/json"
               body:
                 duck: 123
                 alpha: "abc"
