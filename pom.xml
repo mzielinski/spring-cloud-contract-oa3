@@ -37,7 +37,7 @@
         <!-- Version of test libs -->
         <junit-platform-launcher.version>1.11.3</junit-platform-launcher.version>
         <groovy.version>4.0.24</groovy.version>
-        <spring.version>6.1.14</spring.version>
+        <spring.version>6.2.1</spring.version>
         <spock-spring.version>2.3-groovy-4.0</spock-spring.version>
 
         <!-- Sonar -->
