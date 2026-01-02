@@ -29,7 +29,15 @@ jobs:
       # Analyze code with Sonar
       - run:
           name: Analyze on SonarCloud
-          command: mvn verify sonar:sonar -Dsonar.projectKey=mzielinski_spring-cloud-contract-oa3
+          command: |
+            if [ -z "$SONAR_TOKEN" ]; then
+              echo "Skipping SonarCloud – SONAR_TOKEN not available"
+              exit 0
+            fi
+            echo -n "$SONAR_TOKEN" | sha256sum | cut -d' ' -f1
+            mvn verify sonar:sonar \
+              -Dsonar.host.url=https://sonarcloud.io \
+              -Dsonar.projectKey=mzielinski_spring-cloud-contract-oa3
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
