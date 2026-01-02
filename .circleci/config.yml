@@ -28,6 +28,12 @@ jobs:
           command: mvn test
       # Analyze code with Sonar
       - run:
+          name: Debug SONAR_TOKEN origin
+          command: |
+            env | grep SONAR || true
+            echo "Job contexts:"
+            echo "$CIRCLE_CONTEXT"
+      - run:
           name: Analyze on SonarCloud
           command: |
             if [ -z "$SONAR_TOKEN" ]; then
