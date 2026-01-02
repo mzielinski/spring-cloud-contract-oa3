@@ -27,9 +27,9 @@ jobs:
           name: Test
           command: mvn test
       # Analyze code with Sonar
-#      - run:
-#          name: Analyze on SonarCloud
-#          command: mvn verify sonar:sonar -Dsonar.projectKey=mzielinski_spring-cloud-contract-oa3
+      - run:
+          name: Analyze on SonarCloud
+          command: mvn verify sonar:sonar -Dsonar.projectKey=mzielinski_spring-cloud-contract-oa3
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
