@@ -15,7 +15,7 @@ class OpenApiContactConverterTest extends Specification {
     @Unroll
     def 'should not accept valid oa3 documentations without contracts'() {
         given:
-        File file = loadFile('openapi/verify_swagger_petstore_without_contracts.yml')
+        File file = loadFile('spec/verify_swagger_petstore_without_contracts.yml')
 
         expect:
         !objectUnderTest.isAccepted(file)
@@ -24,7 +24,7 @@ class OpenApiContactConverterTest extends Specification {
     @Unroll
     def 'should accept valid oa3 documentations #filename'() {
         given:
-        File file = loadFile("openapi/$filename")
+        File file = loadFile("spec/$filename")
 
         expect:
         objectUnderTest.isAccepted(file)
@@ -42,10 +42,11 @@ class OpenApiContactConverterTest extends Specification {
         'verify_body_from_file_as_bytes.yml' || 1
         'verify_fraud_service.yml'           || 6
         'verify_swagger_petstore.yml'        || 3
-        'sample/payor.yml'                   || 4
-        'sample/velo_payments.yml'           || 10
-        'openapi-scco3-example.json'         || 3
-        'openapi-scco3-example.yml'          || 3
+        'openapi_payor.yml'                  || 4
+        'openapi_velo_payments.yml'          || 10
+        'openapi_sccoa3_basic.json'          || 3
+        'openapi_sccoa3_basic.yml'           || 3
+        'asyncapi_sccoa3_basic.yml'          || 1
     }
 
     @Unroll
@@ -60,7 +61,7 @@ class OpenApiContactConverterTest extends Specification {
         where:
         file << [
                 new File('does-not-exists.yaml'),
-                loadFile('openapi/verify_invalid_oa3.yml')
+                loadFile('spec/verify_invalid_oa3.yml')
         ]
         filename = file.name
     }
@@ -68,8 +69,8 @@ class OpenApiContactConverterTest extends Specification {
     @Unroll
     def 'should verify that contracts generated from #oa3Filename documentation are the same as expected #contractFilename'() {
         given:
-        File oa3Yaml = loadFile("openapi/$oa3Filename")
-        Collection<Contract> expectedContracts = yamlContractConverter.convertFrom(loadFile("yml/$contractFilename"))
+        File oa3Yaml = loadFile("spec/$oa3Filename")
+        Collection<Contract> expectedContracts = yamlContractConverter.convertFrom(loadFile("contracts/$contractFilename"))
 
         expect: 'YAML support'
         objectUnderTest.convertFrom(oa3Yaml).each { contract ->
@@ -92,11 +93,12 @@ class OpenApiContactConverterTest extends Specification {
         'verify_oa3.yml'              || 'contract_oa3.yml'
         'verify_playground.yml'       || 'contract_playground.yml'
         'verify_path_parameter.yml'   || 'contract_path_parameter.yml'
+        'asyncapi_sccoa3_basic.yml'   || 'contract_asyncapi_sccoa3_basic.yml'
     }
 
     def 'should verify that bodyFromFileAsBytes is properly converted to contract'() {
         when:
-        Contract oa3Contract = objectUnderTest.convertFrom(loadFile('openapi/verify_body_from_file_as_bytes.yml')).first()
+        Contract oa3Contract = objectUnderTest.convertFrom(loadFile('spec/verify_body_from_file_as_bytes.yml')).first()
 
         then:
         oa3Contract.name == 'Should verify body from file as bytes'
