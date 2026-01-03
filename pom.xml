@@ -28,15 +28,13 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- Versions of libs -->
-        <spring.cloud.contract.version>4.3.1</spring.cloud.contract.version>
+        <spring.cloud.contract.version>5.0.1</spring.cloud.contract.version>
         <swagger-parser.version>2.1.25</swagger-parser.version>
         <slf4j.version>2.0.16</slf4j.version>
-        <jackson.version>2.18.2</jackson.version>
 
         <!-- Version of test libs -->
-        <junit-platform-launcher.version>1.14.1</junit-platform-launcher.version>
         <groovy.version>4.0.29</groovy.version>
-        <spring.version>6.2.14</spring.version>
+        <spring.version>7.0.2</spring.version>
         <spock-spring.version>2.3-groovy-4.0</spock-spring.version>
 
         <!-- Sonar -->
@@ -49,6 +47,18 @@
         <sonar.jacoco.reportPath>${project.basedir}/target/jacoco.exec</sonar.jacoco.reportPath>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.13.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <!-- ssc -->
         <dependency>
@@ -60,13 +70,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-contract-spec-java</artifactId>
             <version>${spring.cloud.contract.version}</version>
-        </dependency>
-
-        <!-- jackson -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
 
         <!-- logger -->
@@ -116,12 +119,6 @@
         </dependency>
 
         <!-- test spock -->
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-launcher</artifactId>
-            <version>${junit-platform-launcher.version}</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -173,8 +170,8 @@
         <connection>scm:git:git@github.com:mzielinski/spring-cloud-contract-oa3.git</connection>
         <developerConnection>scm:git:git@github.com:mzielinski/spring-cloud-contract-oa3.git</developerConnection>
         <url>https://github.com/mzielinski/spring-cloud-contract-oa3</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <issueManagement>
         <system>GitHub</system>
