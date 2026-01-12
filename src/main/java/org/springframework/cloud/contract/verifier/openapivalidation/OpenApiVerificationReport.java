@@ -1,0 +1,58 @@
+package org.springframework.cloud.contract.verifier.openapivalidation;
+
+import java.util.List;
+
+/**
+ * Aggregated validation report for OpenAPI contract checks.
+ *
+ * @since 5.0.2
+ */
+public record OpenApiVerificationReport(
+        /**
+         * Collected validation violations.
+         *
+         * @since 5.0.2
+         */
+        List<OpenApiContractViolation> violations) {
+
+    /**
+     * Returns whether any violations were recorded.
+     *
+     * @since 5.0.2
+     */
+    public boolean hasViolations() {
+        return !violations.isEmpty();
+    }
+
+    /**
+     * Renders the report as a human-readable string.
+     *
+     * @since 5.0.2
+     */
+    public String render() {
+        if (violations.isEmpty()) {
+            return "✅ All contracts match the OpenAPI specification.";
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("❌ Found ").append(violations.size()).append(" contract violations:")
+                .append(System.lineSeparator());
+        for (int i = 0; i < violations.size(); i++) {
+            OpenApiContractViolation violation = violations.get(i);
+            builder.append(i + 1).append(") ").append(renderViolation(violation))
+                    .append(System.lineSeparator());
+        }
+        return builder.toString().trim();
+    }
+
+    private String renderViolation(OpenApiContractViolation violation) {
+        StringBuilder builder = new StringBuilder();
+        if (violation.contractName() != null && !violation.contractName().isBlank()) {
+            builder.append(violation.contractName()).append(" - ");
+        }
+        builder.append(violation.message());
+        if (violation.sourcePath() != null) {
+            builder.append(" [").append(violation.sourcePath()).append("]");
+        }
+        return builder.toString();
+    }
+}
