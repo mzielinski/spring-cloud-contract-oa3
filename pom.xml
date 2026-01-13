@@ -34,7 +34,7 @@
         <!-- Version of test libs -->
         <groovy.version>5.0.3</groovy.version>
         <spring.version>7.0.2</spring.version>
-        <spock-spring.version>2.3-groovy-4.0</spock-spring.version>
+        <spock-spring.version>2.4-groovy-4.0</spock-spring.version>
 
         <!-- Sonar -->
         <sonar.organization>mzielinski</sonar.organization>
