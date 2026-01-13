@@ -29,7 +29,7 @@
 
         <!-- Versions of libs -->
         <spring.cloud.contract.version>5.0.1</spring.cloud.contract.version>
-        <swagger-parser.version>2.1.25</swagger-parser.version>
+        <swagger-parser.version>2.1.37</swagger-parser.version>
 
         <!-- Version of test libs -->
         <groovy.version>5.0.3</groovy.version>
