@@ -32,7 +32,7 @@
         <swagger-parser.version>2.1.37</swagger-parser.version>
 
         <!-- Version of test libs -->
-        <groovy.version>5.0.3</groovy.version>
+        <groovy.version>5.0.4</groovy.version>
         <spring.version>7.0.3</spring.version>
         <spock-spring.version>2.4-groovy-4.0</spock-spring.version>
 
