@@ -28,7 +28,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- Versions of libs -->
-        <spring.cloud.contract.version>5.0.1</spring.cloud.contract.version>
+        <spring.cloud.contract.version>5.0.2</spring.cloud.contract.version>
         <swagger-parser.version>2.1.37</swagger-parser.version>
 
         <!-- Version of test libs -->
